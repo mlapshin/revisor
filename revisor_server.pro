@@ -1,4 +1,4 @@
-QT      +=  webkit network
+QT      +=  webkit network script
 
 HEADERS =   src/mainwindow.h \
             src/http_server.hpp \
