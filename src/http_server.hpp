@@ -5,7 +5,7 @@
 
 class HttpServer : public QTcpServer
 {
-  Q_OBJECT
+  Q_OBJECT;
 
   public:
   HttpServer(quint16 port, QObject* parent = 0);
@@ -15,8 +15,10 @@ class HttpServer : public QTcpServer
   void pause();
   void resume();
 
-  private slots:
+  signals:
+  void commandReceived(const QString& command);
 
+  private slots:
   void readClient();
   void discardClient();
 

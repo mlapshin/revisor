@@ -1,10 +1,7 @@
-#include <QtGui>
-#include "http_server.hpp"
+#include "application.hpp"
 
 int main(int argc, char * argv[])
 {
-  QApplication app(argc, argv);
-  HttpServer srv(8080);
-
+  Application app(argc, argv);
   return app.exec();
 }

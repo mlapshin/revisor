@@ -7,7 +7,7 @@
 HttpServer::HttpServer(quint16 port, QObject* parent)
     : QTcpServer(parent), disabled(false)
 {
-  listen(QHostAddress::Any, port);
+  listen(QHostAddress::LocalHost, port);
 }
 
 
@@ -41,6 +41,7 @@ void HttpServer::readClient()
   QTcpSocket* socket = (QTcpSocket*)sender();
   if (socket->canReadLine()) {
     QStringList tokens = QString(socket->readLine()).split(QRegExp("[ \r\n][ \r\n]*"));
+
     if (tokens[0] == "GET") {
       QTextStream os(socket);
       os.setAutoDetectUnicode(true);
@@ -54,6 +55,8 @@ void HttpServer::readClient()
       if (socket->state() == QTcpSocket::UnconnectedState) {
         delete socket;
       }
+
+      commandReceived("Hello world!");
     }
   }
 }
