@@ -4,6 +4,7 @@
 #include <QApplication>
 
 class HttpServer;
+class Dispatcher;
 
 class Application : public QApplication
 {
@@ -12,11 +13,9 @@ class Application : public QApplication
  public:
   Application(int argc, char** argv);
 
- private slots:
-  void commandReceived(const QString& cmd);
-
  private:
   HttpServer* httpServer;
+  Dispatcher* dispatcher;
 };
 
 #endif /* _APPLICATION_H_ */

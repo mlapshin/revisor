@@ -2,28 +2,32 @@
 #define _HTTP_SERVER_H_
 
 #include <QTcpServer>
+#include <QScriptValue>
+#include <QScriptEngine>
+
+class Dispatcher;
+class Application;
 
 class HttpServer : public QTcpServer
 {
+  typedef QMap<QString, QString> QStringMap;
   Q_OBJECT;
 
-  public:
-  HttpServer(quint16 port, QObject* parent = 0);
-
+ public:
+  HttpServer(quint16 port, Application* app, Dispatcher* d);
   void incomingConnection(int socket);
 
-  void pause();
-  void resume();
-
-  signals:
-  void commandReceived(const QString& command);
-
-  private slots:
+ private slots:
   void readClient();
   void discardClient();
 
-  private:
-  bool disabled;
+ private:
+
+  QString handleCommand(const QStringMap& params);
+
+  Dispatcher* dispatcher;
+  Application* app;
+  QScriptEngine scriptEngine;
 };
 
 #endif /* _HTTP_SERVER_H_ */
