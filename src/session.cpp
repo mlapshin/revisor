@@ -9,9 +9,7 @@ Session::Session(Application* a)
     : QObject(0)
 {
   app = a;
-  networkManager = new QNetworkAccessManager(this);
-  cookieJar      = new QNetworkCookieJar(networkManager);
-  networkManager->setCookieJar(cookieJar);
+  cookieJar = new QNetworkCookieJar(this);
 
   window = new QWidget();
   window->setWindowTitle("Session Window [Revisor]");

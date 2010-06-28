@@ -4,10 +4,8 @@
 #include <QObject>
 
 class QNetworkCookieJar;
-class QNetworkAccessManager;
 class Application;
 class QWidget;
-class QWebView;
 
 class Session : public QObject
 {
@@ -17,16 +15,14 @@ class Session : public QObject
   Session(Application* a);
   ~Session();
 
-  inline QNetworkAccessManager* getNetworkAccessManager() const {
-    return networkManager;
+  inline QNetworkCookieJar* getNetworkCookieJar() const {
+    return cookieJar;
   }
 
  private:
   QNetworkCookieJar* cookieJar;
-  QNetworkAccessManager* networkManager;
   Application* app;
   QWidget* window;
-  QWebView* webView;
 };
 
 #endif /* _SESSION_H_ */
