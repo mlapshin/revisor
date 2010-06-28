@@ -12,4 +12,11 @@ Dispatcher::Dispatcher(Application* a)
 void Dispatcher::dispatch(const QScriptValue& command)
 {
   QString commandName = command.property("name").toString();
+
+  if (commandName == "session.start") {
+    app->startSession();
+  } else if (commandName == "session.stop") {
+    int sessionIndex = command.property("index").toInteger();
+    app->stopSession(sessionIndex);
+  }
 }

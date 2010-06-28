@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 
 Session::Session(Application* a)
-    : QObject(a)
+    : QObject(0)
 {
   app = a;
   networkManager = new QNetworkAccessManager(this);
@@ -18,6 +18,7 @@ Session::Session(Application* a)
   QVBoxLayout* layout = new QVBoxLayout;
 
   webView = new QWebView(window);
+  webView->page()->setNetworkAccessManager(networkManager);
   layout->addWidget(webView);
 
   window->setLayout(layout);
@@ -27,5 +28,6 @@ Session::Session(Application* a)
 
 Session::~Session()
 {
-  // delete window;
+  window->close();
+  delete window;
 }
