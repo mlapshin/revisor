@@ -6,6 +6,7 @@
 class QNetworkCookieJar;
 class Application;
 class QWidget;
+class SessionTab;
 
 class Session : public QObject
 {
@@ -19,10 +20,15 @@ class Session : public QObject
     return cookieJar;
   }
 
+  inline QWidget* getWindow() const {
+    return window;
+  }
+
  private:
   QNetworkCookieJar* cookieJar;
   Application* app;
   QWidget* window;
+  SessionTab* defaultTab;
 };
 
 #endif /* _SESSION_H_ */

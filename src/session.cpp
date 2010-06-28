@@ -1,9 +1,9 @@
 #include "session.hpp"
 #include "application.hpp"
-#include <QNetworkAccessManager>
+#include "session_tab.hpp"
 #include <QNetworkCookieJar>
-#include <QWebView>
 #include <QVBoxLayout>
+#include <QWidget>
 
 Session::Session(Application* a)
     : QObject(0)
@@ -15,13 +15,10 @@ Session::Session(Application* a)
   window->setWindowTitle("Session Window [Revisor]");
   QVBoxLayout* layout = new QVBoxLayout;
 
-  webView = new QWebView(window);
-  webView->page()->setNetworkAccessManager(networkManager);
-  layout->addWidget(webView);
-
   window->setLayout(layout);
   window->show();
-  webView->load(QString("http://google.com/"));
+
+  defaultTab = new SessionTab(this);
 }
 
 Session::~Session()
