@@ -11,5 +11,5 @@ Dispatcher::Dispatcher(Application* a)
 
 void Dispatcher::dispatch(const QScriptValue& command)
 {
-  qDebug() << command.property("name").toString();
+  QString commandName = command.property("name").toString();
 }

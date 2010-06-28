@@ -1,7 +1,6 @@
 #ifndef _DISPATCHER_H_
 #define _DISPATCHER_H_
 
-#include <QObject>
 #include <QScriptValue>
 
 class Application;
