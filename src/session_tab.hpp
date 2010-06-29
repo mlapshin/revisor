@@ -22,10 +22,21 @@ class SessionTab : public QObject
     return webView;
   }
 
+ public slots:
+  void updateTitle(const QString& t);
+  void updateProgress(int p);
+
+ signals:
+  void titleChanged(const QString& newTitle);
+
  private:
+  void _updateTabTitle();
+
   QNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
+  QString pageTitle;
+  int loadProgress;
 };
 
 #endif /* _SESSION_TAB_H_ */

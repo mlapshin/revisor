@@ -33,6 +33,9 @@ class Session : public QObject
 
   void createTab();
 
+ private slots:
+  void updateTabTitle(const QString& newTabTitle);
+
  private:
   QNetworkCookieJar* cookieJar;
   Application* app;
