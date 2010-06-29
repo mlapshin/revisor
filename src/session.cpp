@@ -4,6 +4,8 @@
 #include <QNetworkCookieJar>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QTabWidget>
+#include <QWebView>
 
 Session::Session(Application* a)
     : QObject(0)
@@ -13,16 +15,25 @@ Session::Session(Application* a)
 
   window = new QWidget();
   window->setWindowTitle("Session Window [Revisor]");
-  QVBoxLayout* layout = new QVBoxLayout;
-
+  layout = new QVBoxLayout;
+  tabWidget = new QTabWidget(window);
   window->setLayout(layout);
+  layout->addWidget(tabWidget);
   window->show();
 
-  defaultTab = new SessionTab(this);
+  createTab();
 }
 
 Session::~Session()
 {
   window->close();
   delete window;
+}
+
+void Session::createTab()
+{
+  SessionTab* s = new SessionTab(this);
+  tabs.append(s);
+
+  tabWidget->addTab(s->getWebView(), QString("Tab"));
 }

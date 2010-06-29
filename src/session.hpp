@@ -2,10 +2,13 @@
 #define _SESSION_H_
 
 #include <QObject>
+#include <QList>
 
 class QNetworkCookieJar;
 class Application;
 class QWidget;
+class QVBoxLayout;
+class QTabWidget;
 class SessionTab;
 
 class Session : public QObject
@@ -24,11 +27,19 @@ class Session : public QObject
     return window;
   }
 
+  inline QTabWidget* getTabWidget() const {
+    return tabWidget;
+  }
+
+  void createTab();
+
  private:
   QNetworkCookieJar* cookieJar;
   Application* app;
   QWidget* window;
-  SessionTab* defaultTab;
+  QVBoxLayout* layout;
+  QTabWidget* tabWidget;
+  QList<SessionTab*> tabs;
 };
 
 #endif /* _SESSION_H_ */

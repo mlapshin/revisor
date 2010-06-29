@@ -18,6 +18,10 @@ class SessionTab : public QObject
     return networkManager;
   }
 
+  inline QWebView* getWebView() const {
+    return webView;
+  }
+
  private:
   QNetworkAccessManager* networkManager;
   Session* session;

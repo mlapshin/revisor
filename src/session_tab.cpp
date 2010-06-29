@@ -11,11 +11,9 @@ SessionTab::SessionTab(Session* s)
   networkManager = new QNetworkAccessManager(this);
   networkManager->setCookieJar(session->getNetworkCookieJar());
 
-  QWidget* window = session->getWindow();
+  QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
   webView = new QWebView(window);
   webView->page()->setNetworkAccessManager(networkManager);
-  window->layout()->addWidget(webView);
-
   webView->load(QString("http://google.com/"));
 }
 
