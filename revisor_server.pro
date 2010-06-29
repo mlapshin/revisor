@@ -5,7 +5,8 @@ HEADERS =   src/mainwindow.h \
             src/application.hpp \
             src/dispatcher.hpp \
             src/session.hpp \
-            src/session_tab.hpp
+            src/session_tab.hpp \
+            src/counting_network_access_manager.hpp
 
 SOURCES =   src/main.cpp \
             src/mainwindow.cpp \
@@ -13,4 +14,5 @@ SOURCES =   src/main.cpp \
             src/application.cpp \
             src/dispatcher.cpp \
             src/session.cpp \
-            src/session_tab.cpp
+            src/session_tab.cpp \
+            src/counting_network_access_manager.cpp

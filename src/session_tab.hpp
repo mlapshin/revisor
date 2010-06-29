@@ -4,7 +4,7 @@
 #include <QObject>
 
 class Session;
-class QNetworkAccessManager;
+class CountingNetworkAccessManager;
 class QWebView;
 
 class SessionTab : public QObject
@@ -14,7 +14,7 @@ class SessionTab : public QObject
   SessionTab(Session* s);
   ~SessionTab();
 
-  inline QNetworkAccessManager* getNetworkAccessManager() const {
+  inline CountingNetworkAccessManager* getNetworkAccessManager() const {
     return networkManager;
   }
 
@@ -32,7 +32,7 @@ class SessionTab : public QObject
  private:
   void _updateTabTitle();
 
-  QNetworkAccessManager* networkManager;
+  CountingNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
   QString pageTitle;

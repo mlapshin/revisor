@@ -1,6 +1,6 @@
 #include "session_tab.hpp"
 #include "session.hpp"
-#include <QNetworkAccessManager>
+#include "counting_network_access_manager.hpp"
 #include <QWebView>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -8,7 +8,7 @@
 SessionTab::SessionTab(Session* s)
     : QObject(s), session(s), loadProgress(0)
 {
-  networkManager = new QNetworkAccessManager(this);
+  networkManager = new CountingNetworkAccessManager(this);
   networkManager->setCookieJar(session->getNetworkCookieJar());
 
   QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
