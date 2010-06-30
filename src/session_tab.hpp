@@ -22,6 +22,8 @@ class SessionTab : public QObject
     return webView;
   }
 
+  void visit(const QString& url);
+
  public slots:
   void updateTitle(const QString& t);
   void updateProgress(int p);
