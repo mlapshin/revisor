@@ -14,7 +14,6 @@ SessionTab::SessionTab(Session* s)
   QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
   webView = new QWebView(window);
   webView->page()->setNetworkAccessManager(networkManager);
-  webView->load(QString("http://google.com/"));
 
   connect(webView, SIGNAL(titleChanged(const QString&)),
           this,    SLOT(updateTitle(const QString&)));
@@ -26,6 +25,11 @@ SessionTab::SessionTab(Session* s)
 SessionTab::~SessionTab()
 {
   qDebug() << "SessionTab::~SessionTab()";
+}
+
+void SessionTab::visit(const QString& url)
+{
+  webView->load(url);
 }
 
 void SessionTab::updateTitle(const QString& t)

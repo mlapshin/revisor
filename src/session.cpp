@@ -49,3 +49,12 @@ void Session::updateTabTitle(const QString& newTitle)
   int idx = tabs.indexOf(s);
   tabWidget->setTabText(idx, newTitle);
 }
+
+SessionTab* Session::getTab(unsigned int idx) const
+{
+  if (idx < tabs.length()) {
+    return tabs[idx];
+  } else {
+    return 0;
+  }
+}

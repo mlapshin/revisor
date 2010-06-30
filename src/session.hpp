@@ -33,6 +33,12 @@ class Session : public QObject
 
   void createTab();
 
+  inline unsigned int getTabsCount() const {
+    return tabs.length();
+  }
+
+  SessionTab* getTab(unsigned int idx) const;
+
  private slots:
   void updateTabTitle(const QString& newTabTitle);
 

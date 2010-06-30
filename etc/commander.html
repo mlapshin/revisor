@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Revisor Commander</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="json2.js" type="text/javascript"></script>
+    <script src="commander.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <form action="http://localhost:8080/command" method="post" target="result">
+      <p>
+        Command:
+        <select id="command_select">
+          <option value="session_start">Start Session</option>
+          <option value="session_tab_create">Create Tab</option>
+        </select>
+        <br />
+
+        <textarea id="command" name="command" rows="10" cols="80"></textarea>
+        <br />
+
+        <input type="submit" id="submit" />
+      </p>
+    </form>
+
+    <p>
+      Response: <br />
+      <iframe name="result" width="450" height="100"/>
+    </p>
+  </body>
+</html>

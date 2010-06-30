@@ -1,5 +1,7 @@
 #include "dispatcher.hpp"
 #include "application.hpp"
+#include "session_tab.hpp"
+#include "session.hpp"
 #include <QDebug>
 #include <QScriptValueIterator>
 
@@ -16,7 +18,16 @@ void Dispatcher::dispatch(const QScriptValue& command)
   if (commandName == "session.start") {
     app->startSession();
   } else if (commandName == "session.stop") {
-    int sessionIndex = command.property("index").toInteger();
+    int sessionIndex = command.property("session_index").toInteger();
     app->stopSession(sessionIndex);
+  } else if (commandName == "session.tab.create") {
+    int sessionIndex = command.property("session_index").toInteger();
+    app->getSession(sessionIndex)->createTab();
+  } else if (commandName == "session.tab.visit") {
+    int sessionIndex = command.property("session_index").toInteger();
+    int tabIndex     = command.property("tab_index").toInteger();
+    QString url      = command.property("url").toString();
+
+    app->getSession(sessionIndex)->getTab(tabIndex)->visit(url);
   }
 }
