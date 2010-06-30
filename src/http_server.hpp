@@ -4,9 +4,10 @@
 #include <QTcpServer>
 #include <QScriptValue>
 #include <QScriptEngine>
+#include "dispatcher.hpp"
 
-class Dispatcher;
 class Application;
+class QSignalMapper;
 
 class HttpServer : public QTcpServer
 {
@@ -20,14 +21,16 @@ class HttpServer : public QTcpServer
  private slots:
   void readClient();
   void discardClient();
+  void deferredResponseReady(QObject* socket);
 
  private:
-
-  QString handleCommand(const QStringMap& params);
+  void handleCommand(const QStringMap& params, QTcpSocket* socket);
+  void sendRawResponse(const QString& response, QTcpSocket* socket);
 
   Dispatcher* dispatcher;
   Application* app;
   QScriptEngine scriptEngine;
+  QSignalMapper* signalMapper;
 };
 
 #endif /* _HTTP_SERVER_H_ */

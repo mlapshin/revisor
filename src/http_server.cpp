@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QUrl>
 #include <QtDebug>
+#include <QSignalMapper>
 
 #define BUFFER_SIZE (1024 * 1024)
 #define TIMEOUT     (10 * 1000)
@@ -14,6 +15,7 @@ HttpServer::HttpServer(quint16 port, Application* a, Dispatcher* d)
     : QTcpServer(a), dispatcher(d), app(a)
 {
   listen(QHostAddress::LocalHost, port);
+  signalMapper = new QSignalMapper(this);
 }
 
 void HttpServer::incomingConnection(int socket)
@@ -24,15 +26,47 @@ void HttpServer::incomingConnection(int socket)
   s->setSocketDescriptor(socket);
 }
 
-QString HttpServer::handleCommand(const QStringMap& params)
+void HttpServer::handleCommand(const QStringMap& params, QTcpSocket* socket)
 {
   qDebug() << "Raw json: " << params["command"];
-  dispatcher->dispatch(scriptEngine.evaluate("_foo = " + params["command"]));
+  DispatcherResponse response = dispatcher->dispatch(scriptEngine.evaluate("_foo = " + params["command"]));
 
-  return QString("HTTP/1.0 200 OK\r\n"
-                 "Content-Type: text/html; charset=\"utf-8\"\r\n"
-                 "\r\n"
-                 "<h1>OK</h1>\n");
+  if (response.deferred) {
+    connect(response.deferredThread, SIGNAL(finished()),
+            signalMapper,            SLOT(map()));
+
+    signalMapper->setMapping(response.deferredThread, socket);
+  } else {
+    QString r = "HTTP/1.0 200 OK\r\n"
+        "Content-Type: text/html; charset=\"utf-8\"\r\n"
+        "\r\n"
+        "<h1>OK</h1>\n";
+
+    sendRawResponse(r, socket);
+  }
+}
+
+void HttpServer::deferredResponseReady(QObject* socket)
+{
+  QTcpSocket* s = qobject_cast<QTcpSocket*>(socket);
+
+  QString r = "HTTP/1.0 200 OK\r\n"
+      "Content-Type: text/html; charset=\"utf-8\"\r\n"
+      "\r\n"
+      "<h1>OK</h1>\n";
+
+  sendRawResponse(r, s);
+}
+
+void HttpServer::sendRawResponse(const QString& response, QTcpSocket* socket)
+{
+  QTextStream os(socket);
+  os << response;
+
+  socket->close();
+  if (socket->state() == QTcpSocket::UnconnectedState) {
+    delete socket;
+  }
 }
 
 void HttpServer::readClient()
@@ -47,7 +81,6 @@ void HttpServer::readClient()
   bool requestRead = false;
   int step = 0;
   int bodyLength = 0;
-  QString response;
 
   while (requestRead == false) {
     if (step < 2) {
@@ -112,19 +145,7 @@ void HttpServer::readClient()
   }
 
   if (requestMethod == "POST" && path == "/command") {
-    response = this->handleCommand(requestParams);
-  }
-
-  if (response.length() > 0) {
-    QTextStream os(socket);
-    os.setAutoDetectUnicode(true);
-    os << response;
-  }
-
-  socket->close();
-
-  if (socket->state() == QTcpSocket::UnconnectedState) {
-    delete socket;
+    this->handleCommand(requestParams, socket);
   }
 }
 

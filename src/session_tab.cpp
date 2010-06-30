@@ -24,6 +24,8 @@ SessionTab::SessionTab(Session* s)
   connect(webView, SIGNAL(loadFinished(bool)),
           this,    SLOT(loadFinished(bool)));
 
+  connect(networkManager, SIGNAL(finished(QNetworkReply*)),
+          this,           SLOT(singleRequestFinished(QNetworkReply*)));
 }
 
 SessionTab::~SessionTab()
@@ -34,6 +36,11 @@ SessionTab::~SessionTab()
 void SessionTab::visit(const QString& url)
 {
   webView->load(url);
+}
+
+void SessionTab::waitForLoad()
+{
+  pageLoaded.wait(&pageLoadedMutex);
 }
 
 void SessionTab::updateTitle(const QString& t)
@@ -63,4 +70,11 @@ void SessionTab::_updateTabTitle()
   }
 
   titleChanged(title);
+}
+
+void SessionTab::singleRequestFinished(QNetworkReply* reply)
+{
+  if (networkManager->getRequestsCount() == 0) {
+    pageLoaded.wakeAll();
+  }
 }

@@ -2,10 +2,13 @@
 #define _SESSION_TAB_H_
 
 #include <QObject>
+#include <QWaitCondition>
+#include <QMutex>
 
 class Session;
 class CountingNetworkAccessManager;
 class QWebView;
+class QNetworkReply;
 
 class SessionTab : public QObject
 {
@@ -23,11 +26,13 @@ class SessionTab : public QObject
   }
 
   void visit(const QString& url);
+  void waitForLoad();
 
  public slots:
   void updateTitle(const QString& t);
   void updateProgress(int p);
   void loadFinished(bool s);
+  void singleRequestFinished(QNetworkReply* reply);
 
  signals:
   void titleChanged(const QString& newTitle);
@@ -35,6 +40,8 @@ class SessionTab : public QObject
  private:
   void _updateTabTitle();
 
+  QWaitCondition pageLoaded;
+  QMutex pageLoadedMutex;
   CountingNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
