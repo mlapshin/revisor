@@ -9,25 +9,23 @@
   </head>
 
   <body>
-    <form action="http://localhost:8080/command" method="post" target="result">
+    <form action="http://localhost:8080/command" method="post" target="result" id="command_form">
       <p>
         Command:
-        <select id="command_select">
-          <option value="session_start">Start Session</option>
-          <option value="session_tab_create">Create Tab</option>
-        </select>
+        <select id="command_select"></select>
         <br />
 
-        <textarea id="command" name="command" rows="10" cols="80"></textarea>
+        <textarea id="commands" rows="10" cols="80"></textarea>
+        <input type="hidden" name="command" id="command" />
         <br />
 
-        <input type="submit" id="submit" />
+        <input type="submit" id="submit_button" />
       </p>
     </form>
 
     <p>
       Response: <br />
-      <iframe name="result" width="450" height="100"/>
+      <iframe name="result" id="result" width="450" height="100" onload="postNextCommand();" />
     </p>
   </body>
 </html>

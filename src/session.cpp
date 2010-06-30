@@ -22,8 +22,6 @@ Session::Session(Application* a)
   window->setLayout(layout);
   layout->addWidget(tabWidget);
   window->show();
-
-  createTab();
 }
 
 Session::~Session()
@@ -32,7 +30,7 @@ Session::~Session()
   delete window;
 }
 
-void Session::createTab()
+unsigned int Session::createTab()
 {
   SessionTab* s = new SessionTab(this);
   tabs.append(s);
@@ -40,6 +38,8 @@ void Session::createTab()
 
   connect(s,    SIGNAL(titleChanged(const QString&)),
           this, SLOT(updateTabTitle(const QString&)));
+
+  return tabs.length() - 1;
 }
 
 void Session::updateTabTitle(const QString& newTitle)
