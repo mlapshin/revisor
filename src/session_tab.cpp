@@ -21,6 +21,10 @@ SessionTab::SessionTab(Session* s)
 
   connect(webView, SIGNAL(loadProgress(int)),
           this,    SLOT(updateProgress(int)));
+
+  connect(webView, SIGNAL(loadFinished(bool)),
+          this,    SLOT(loadFinished(bool)));
+
 }
 
 SessionTab::~SessionTab()
@@ -37,6 +41,12 @@ void SessionTab::updateTitle(const QString& t)
 void SessionTab::updateProgress(int p)
 {
   loadProgress = p;
+  _updateTabTitle();
+}
+
+void SessionTab::loadFinished(bool success)
+{
+  loadProgress = 100;
   _updateTabTitle();
 }
 

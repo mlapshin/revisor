@@ -25,6 +25,7 @@ class SessionTab : public QObject
  public slots:
   void updateTitle(const QString& t);
   void updateProgress(int p);
+  void loadFinished(bool s);
 
  signals:
   void titleChanged(const QString& newTitle);
