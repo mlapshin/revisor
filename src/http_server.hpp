@@ -3,7 +3,6 @@
 
 #include <QTcpServer>
 #include <QScriptValue>
-#include <QScriptEngine>
 #include "dispatcher.hpp"
 
 class Application;
@@ -29,7 +28,6 @@ class HttpServer : public QTcpServer
 
   Dispatcher* dispatcher;
   Application* app;
-  QScriptEngine scriptEngine;
   QSignalMapper* signalMapper;
 };
 

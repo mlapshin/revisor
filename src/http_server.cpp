@@ -29,13 +29,17 @@ void HttpServer::incomingConnection(int socket)
 void HttpServer::handleCommand(const QStringMap& params, QTcpSocket* socket)
 {
   qDebug() << "Raw json: " << params["command"];
-  DispatcherResponse response = dispatcher->dispatch(scriptEngine.evaluate("_foo = " + params["command"]));
+  DispatcherResponse response = dispatcher->dispatch(app->getScriptEngine()->evaluate("_foo = " + params["command"]));
 
   if (response.deferred) {
+    qDebug() << "Subscribed to deferred response thread";
     connect(response.deferredThread, SIGNAL(finished()),
             signalMapper,            SLOT(map()));
 
     signalMapper->setMapping(response.deferredThread, socket);
+
+    connect(signalMapper, SIGNAL(mapped(QObject*)),
+            this,         SLOT(deferredResponseReady(QObject*)));
   } else {
     QString r = "HTTP/1.0 200 OK\r\n"
         "Content-Type: text/html; charset=\"utf-8\"\r\n"
@@ -48,6 +52,7 @@ void HttpServer::handleCommand(const QStringMap& params, QTcpSocket* socket)
 
 void HttpServer::deferredResponseReady(QObject* socket)
 {
+  qDebug() << "DEFERRED RESPONSE READY";
   QTcpSocket* s = qobject_cast<QTcpSocket*>(socket);
 
   QString r = "HTTP/1.0 200 OK\r\n"

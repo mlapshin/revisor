@@ -5,10 +5,17 @@
 #include <QDebug>
 #include <QScriptValueIterator>
 
-class WaitForLoadThread : public QThread
+DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d)
+    : QThread(d), dispatcher(d)
+{
+
+}
+
+class WaitForLoadThread : public DeferredDispatcherResponseThread
 {
  public:
-  WaitForLoadThread(int s, int t, Application* a) : sessionIndex(s), tabIndex(t), app(a) {}
+  WaitForLoadThread(Dispatcher* d, int s, int t, Application* a)
+      : DeferredDispatcherResponseThread(d), sessionIndex(s), tabIndex(t), app(a) {}
   void run();
 
  private:
@@ -30,6 +37,7 @@ Dispatcher::Dispatcher(Application* a)
 
 DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
 {
+  DispatcherResponse response(app);
   QString commandName = command.property("name").toString();
 
   if (commandName == "session.start") {
@@ -38,22 +46,23 @@ DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
   } else if (commandName == "session.stop") {
     int sessionIndex = command.property("session_index").toInteger();
     app->stopSession(sessionIndex);
-
   } else if (commandName == "session.tab.create") {
     int sessionIndex = command.property("session_index").toInteger();
     app->getSession(sessionIndex)->createTab();
-
   } else if (commandName == "session.tab.visit") {
     int sessionIndex = command.property("session_index").toInteger();
     int tabIndex     = command.property("tab_index").toInteger();
     QString url      = command.property("url").toString();
     app->getSession(sessionIndex)->getTab(tabIndex)->visit(url);
-
   } else if (commandName == "session.tab.wait_for_load") {
     int sessionIndex = command.property("session_index").toInteger();
     int tabIndex     = command.property("tab_index").toInteger();
 
-    WaitForLoadThread t(sessionIndex, tabIndex, app);
-    t.start();
+    WaitForLoadThread* t = new WaitForLoadThread(this, sessionIndex, tabIndex, app);
+    t->start();
+    response.deferred = true;
+    response.deferredThread = t;
   }
+
+  return response;
 }

@@ -40,7 +40,9 @@ void SessionTab::visit(const QString& url)
 
 void SessionTab::waitForLoad()
 {
+  pageLoadedMutex.lock();
   pageLoaded.wait(&pageLoadedMutex);
+  pageLoadedMutex.unlock();
 }
 
 void SessionTab::updateTitle(const QString& t)
@@ -74,6 +76,7 @@ void SessionTab::_updateTabTitle()
 
 void SessionTab::singleRequestFinished(QNetworkReply* reply)
 {
+  qDebug() << "Request finished, " << networkManager->getRequestsCount() << " remaining";
   if (networkManager->getRequestsCount() == 0) {
     pageLoaded.wakeAll();
   }

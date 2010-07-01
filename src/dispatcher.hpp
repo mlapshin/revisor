@@ -3,18 +3,22 @@
 
 #include <QScriptValue>
 #include <QThread>
+#include "application.hpp"
 
-class Application;
 class HttpServer;
+class Dispatcher;
 
 class DeferredDispatcherResponseThread : public QThread
 {
  public:
+  DeferredDispatcherResponseThread(Dispatcher* d);
+
   const QScriptValue& getResponse() const {
     return response;
   }
 
  protected:
+  Dispatcher* dispatcher;
   QScriptValue response;
 };
 
@@ -22,19 +26,21 @@ class DispatcherResponse
 {
  public:
   bool deferred;
+  Application* app;
   QScriptValue response;
   DeferredDispatcherResponseThread* deferredThread;
 
-  DispatcherResponse()
-      : deferred(false), deferredThread(0) {}
+  DispatcherResponse(Application* a)
+      : deferred(false), app(a), deferredThread(0) {}
 
   DispatcherResponse(const DispatcherResponse& r)
-      : deferred(r.deferred), response(r.response), deferredThread(r.deferredThread) {}
+      : deferred(r.deferred), app(r.app), response(r.response), deferredThread(r.deferredThread) {}
 
   const DispatcherResponse& operator= (const DispatcherResponse& r) {
     deferred = r.deferred;
     response = r.response;
     deferredThread = r.deferredThread;
+    app = r.app;
 
     return *this;
   }

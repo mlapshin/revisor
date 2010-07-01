@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QList>
+#include <QScriptEngine>
 
 class HttpServer;
 class Dispatcher;
@@ -23,10 +24,15 @@ class Application : public QApplication
     return sessions.length();
   }
 
+  QScriptEngine* getScriptEngine() {
+    return &scriptEngine;
+  }
+
  private:
   HttpServer* httpServer;
   Dispatcher* dispatcher;
   QList<Session*> sessions;
+  QScriptEngine scriptEngine;
 };
 
 #endif /* _APPLICATION_H_ */
