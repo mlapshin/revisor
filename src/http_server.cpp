@@ -28,45 +28,39 @@ void HttpServer::incomingConnection(int socket)
 
 void HttpServer::handleCommand(const QStringMap& params, QTcpSocket* socket)
 {
-  qDebug() << "Raw json: " << params["command"];
   DispatcherResponse response = dispatcher->dispatch(app->getScriptEngine()->evaluate("_foo = " + params["command"]));
 
-  if (response.deferred) {
-    qDebug() << "Subscribed to deferred response thread";
+  if (response.deferredThread) {
+    deferredSocketsMap.insert(response.deferredThread, socket);
     connect(response.deferredThread, SIGNAL(finished()),
-            signalMapper,            SLOT(map()));
-
-    signalMapper->setMapping(response.deferredThread, socket);
-
-    connect(signalMapper, SIGNAL(mapped(QObject*)),
-            this,         SLOT(deferredResponseReady(QObject*)));
+            this,                    SLOT(deferredResponseReady()));
   } else {
-    QString r = "HTTP/1.0 200 OK\r\n"
-        "Content-Type: text/html; charset=\"utf-8\"\r\n"
-        "\r\n"
-        "<h1>OK</h1>\n";
-
-    sendRawResponse(r, socket);
+    sendRawResponse(response.response, socket);
   }
 }
 
-void HttpServer::deferredResponseReady(QObject* socket)
+void HttpServer::deferredResponseReady()
 {
-  qDebug() << "DEFERRED RESPONSE READY";
-  QTcpSocket* s = qobject_cast<QTcpSocket*>(socket);
+  qDebug() << "Sending deferred response";
 
-  QString r = "HTTP/1.0 200 OK\r\n"
-      "Content-Type: text/html; charset=\"utf-8\"\r\n"
-      "\r\n"
-      "<h1>OK</h1>\n";
+  DeferredDispatcherResponseThread* thread = qobject_cast<DeferredDispatcherResponseThread*>(sender());
+  QTcpSocket* socket = deferredSocketsMap[thread];
 
-  sendRawResponse(r, s);
+  sendRawResponse(thread->getResponse(), socket);
 }
 
 void HttpServer::sendRawResponse(const QString& response, QTcpSocket* socket)
 {
   QTextStream os(socket);
-  os << response;
+
+  if (response.length() > 0) {
+    os << response;
+  } else {
+    os << "HTTP/1.0 200 OK\r\n"
+        "Content-Type: text/html; charset=\"utf-8\"\r\n"
+        "\r\n"
+        "<h1>OK</h1>\n";
+  }
 
   socket->close();
   if (socket->state() == QTcpSocket::UnconnectedState) {

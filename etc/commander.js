@@ -2,7 +2,8 @@ var commands = {
   start_session_and_visit_google_com: [
     { name: "session.start" },
     { name: "session.tab.create", session_index: 0 },
-    { name: "session.tab.visit", session_index: 0, tab_index: 0, url: "http://google.com/" }
+    { name: "session.tab.visit", session_index: 0, tab_index: 0, url: "http://google.com/" },
+    { name: "session.tab.wait_for_load", session_index: 0, tab_index: 0 }
   ],
 
   session_start: {

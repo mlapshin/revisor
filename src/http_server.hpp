@@ -20,7 +20,7 @@ class HttpServer : public QTcpServer
  private slots:
   void readClient();
   void discardClient();
-  void deferredResponseReady(QObject* socket);
+  void deferredResponseReady();
 
  private:
   void handleCommand(const QStringMap& params, QTcpSocket* socket);
@@ -29,6 +29,7 @@ class HttpServer : public QTcpServer
   Dispatcher* dispatcher;
   Application* app;
   QSignalMapper* signalMapper;
+  QMap<DeferredDispatcherResponseThread*, QTcpSocket*> deferredSocketsMap;
 };
 
 #endif /* _HTTP_SERVER_H_ */

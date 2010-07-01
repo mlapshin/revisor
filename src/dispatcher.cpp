@@ -37,12 +37,12 @@ Dispatcher::Dispatcher(Application* a)
 
 DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
 {
-  DispatcherResponse response(app);
+  DispatcherResponse response;
   QString commandName = command.property("name").toString();
+  qDebug() << "Received command " << commandName;
 
   if (commandName == "session.start") {
     app->startSession();
-
   } else if (commandName == "session.stop") {
     int sessionIndex = command.property("session_index").toInteger();
     app->stopSession(sessionIndex);
@@ -60,7 +60,6 @@ DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
 
     WaitForLoadThread* t = new WaitForLoadThread(this, sessionIndex, tabIndex, app);
     t->start();
-    response.deferred = true;
     response.deferredThread = t;
   }
 

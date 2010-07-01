@@ -10,37 +10,35 @@ class Dispatcher;
 
 class DeferredDispatcherResponseThread : public QThread
 {
+  Q_OBJECT;
+
  public:
   DeferredDispatcherResponseThread(Dispatcher* d);
 
-  const QScriptValue& getResponse() const {
+  const QString& getResponse() const {
     return response;
   }
 
  protected:
   Dispatcher* dispatcher;
-  QScriptValue response;
+  QString response;
 };
 
 class DispatcherResponse
 {
  public:
-  bool deferred;
-  Application* app;
-  QScriptValue response;
+  QString response;
   DeferredDispatcherResponseThread* deferredThread;
 
-  DispatcherResponse(Application* a)
-      : deferred(false), app(a), deferredThread(0) {}
+  DispatcherResponse()
+      : deferredThread(0) {}
 
   DispatcherResponse(const DispatcherResponse& r)
-      : deferred(r.deferred), app(r.app), response(r.response), deferredThread(r.deferredThread) {}
+      : response(r.response), deferredThread(r.deferredThread) {}
 
   const DispatcherResponse& operator= (const DispatcherResponse& r) {
-    deferred = r.deferred;
     response = r.response;
     deferredThread = r.deferredThread;
-    app = r.app;
 
     return *this;
   }
