@@ -14,6 +14,7 @@ SessionTab::SessionTab(Session* s)
   QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
   webView = new QWebView(window);
   webView->page()->setNetworkAccessManager(networkManager);
+  webView->setDisabled(true);
 
   connect(webView, SIGNAL(titleChanged(const QString&)),
           this,    SLOT(updateTitle(const QString&)));
@@ -38,11 +39,19 @@ void SessionTab::visit(const QString& url)
   webView->load(url);
 }
 
-void SessionTab::waitForLoad()
+bool SessionTab::waitForLoad(unsigned int t)
 {
+  unsigned long timeout = t;
+
+  if (t == 0) {
+    timeout = ULONG_MAX;
+  }
+
   pageLoadedMutex.lock();
-  pageLoaded.wait(&pageLoadedMutex);
+  bool result = pageLoaded.wait(&pageLoadedMutex, timeout);
   pageLoadedMutex.unlock();
+
+  return result;
 }
 
 void SessionTab::updateTitle(const QString& t)
@@ -61,6 +70,10 @@ void SessionTab::loadFinished(bool success)
 {
   loadProgress = 100;
   _updateTabTitle();
+
+  if (networkManager->getRequestsCount() == 0) {
+    pageLoaded.wakeAll();
+  }
 }
 
 void SessionTab::_updateTabTitle()
@@ -76,8 +89,4 @@ void SessionTab::_updateTabTitle()
 
 void SessionTab::singleRequestFinished(QNetworkReply* reply)
 {
-  qDebug() << "Request finished, " << networkManager->getRequestsCount() << " remaining";
-  if (networkManager->getRequestsCount() == 0) {
-    pageLoaded.wakeAll();
-  }
 }

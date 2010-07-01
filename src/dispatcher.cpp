@@ -4,6 +4,7 @@
 #include "session.hpp"
 #include <QDebug>
 #include <QScriptValueIterator>
+#include <QTime>
 
 DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d)
     : QThread(d), dispatcher(d)
@@ -26,7 +27,10 @@ class WaitForLoadThread : public DeferredDispatcherResponseThread
 
 void WaitForLoadThread::run()
 {
+  QTime t;
+  t.start();
   app->getSession(sessionIndex)->getTab(tabIndex)->waitForLoad();
+  qDebug("Wait for load time: %.3f", t.elapsed() / 1000.0f);
 }
 
 Dispatcher::Dispatcher(Application* a)

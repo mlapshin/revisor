@@ -26,7 +26,7 @@ class SessionTab : public QObject
   }
 
   void visit(const QString& url);
-  void waitForLoad();
+  bool waitForLoad(unsigned int timeout = 0);
 
  public slots:
   void updateTitle(const QString& t);

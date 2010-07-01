@@ -1,7 +1,6 @@
 QT      +=  webkit network script
 
-HEADERS =   src/mainwindow.h \
-            src/http_server.hpp \
+HEADERS =   src/http_server.hpp \
             src/application.hpp \
             src/dispatcher.hpp \
             src/session.hpp \
@@ -9,7 +8,6 @@ HEADERS =   src/mainwindow.h \
             src/counting_network_access_manager.hpp
 
 SOURCES =   src/main.cpp \
-            src/mainwindow.cpp \
             src/http_server.cpp \
             src/application.cpp \
             src/dispatcher.cpp \

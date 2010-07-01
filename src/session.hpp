@@ -3,13 +3,23 @@
 
 #include <QObject>
 #include <QList>
+#include <QWidget>
 
 class QNetworkCookieJar;
 class Application;
-class QWidget;
 class QVBoxLayout;
 class QTabWidget;
 class SessionTab;
+class SessionWindow;
+
+class SessionWindow : public QWidget
+{
+  Q_OBJECT;
+
+ public:
+  SessionWindow();
+  void closeEvent(QCloseEvent* event);
+};
 
 class Session : public QObject
 {
@@ -23,7 +33,7 @@ class Session : public QObject
     return cookieJar;
   }
 
-  inline QWidget* getWindow() const {
+  inline SessionWindow* getWindow() const {
     return window;
   }
 
@@ -37,7 +47,7 @@ class Session : public QObject
     return tabs.length();
   }
 
-  SessionTab* getTab(unsigned int idx) const;
+  SessionTab* getTab(int idx) const;
 
  private slots:
   void updateTabTitle(const QString& newTabTitle);
@@ -45,7 +55,7 @@ class Session : public QObject
  private:
   QNetworkCookieJar* cookieJar;
   Application* app;
-  QWidget* window;
+  SessionWindow* window;
   QVBoxLayout* layout;
   QTabWidget* tabWidget;
   QList<SessionTab*> tabs;

@@ -7,6 +7,19 @@
 #include <QTabWidget>
 #include <QWebView>
 #include <QDebug>
+#include <QCloseEvent>
+
+SessionWindow::SessionWindow()
+    : QWidget()
+{
+  resize(800, 600);
+  setWindowTitle("Revisor Session");
+}
+
+void SessionWindow::closeEvent(QCloseEvent* event)
+{
+  event->ignore();
+}
 
 Session::Session(Application* a)
     : QObject(0)
@@ -14,9 +27,7 @@ Session::Session(Application* a)
   app = a;
   cookieJar = new QNetworkCookieJar(this);
 
-  window = new QWidget();
-  window->resize(QSize(800, 600));
-  window->setWindowTitle("Session Window [Revisor]");
+  window = new SessionWindow();
   layout = new QVBoxLayout;
   tabWidget = new QTabWidget(window);
   window->setLayout(layout);
@@ -50,7 +61,7 @@ void Session::updateTabTitle(const QString& newTitle)
   tabWidget->setTabText(idx, newTitle);
 }
 
-SessionTab* Session::getTab(unsigned int idx) const
+SessionTab* Session::getTab(int idx) const
 {
   if (idx < tabs.length()) {
     return tabs[idx];
