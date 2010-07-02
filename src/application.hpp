@@ -3,7 +3,9 @@
 
 #include <QApplication>
 #include <QList>
+#include <QStringList>
 #include <QScriptEngine>
+#include <argtable2.h>
 
 class HttpServer;
 class Dispatcher;
@@ -28,7 +30,16 @@ class Application : public QApplication
     return &scriptEngine;
   }
 
+  int start();
+
  private:
+
+  int argc;
+  char** argv;
+  bool initArgtable();
+  int portNumber;
+  QStringList listenInterfaces;
+
   HttpServer* httpServer;
   Dispatcher* dispatcher;
   QList<Session*> sessions;

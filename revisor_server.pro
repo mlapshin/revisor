@@ -1,4 +1,5 @@
 QT      +=  webkit network script
+LIBS    +=  -largtable2
 
 HEADERS =   src/http_server.hpp \
             src/application.hpp \
