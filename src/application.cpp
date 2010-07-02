@@ -49,7 +49,7 @@ bool Application::initArgtable()
   }
 
   if (l->count > 0) {
-    listeningInterface.append(l->sval[0]);
+    listeningInterface = l->sval[0];
   }
 
   if (p->count > 0) {
