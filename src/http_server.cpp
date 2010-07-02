@@ -5,17 +5,17 @@
 #include <QRegExp>
 #include <QStringList>
 #include <QUrl>
-#include <QtDebug>
+#include <QDebug>
 #include <QSignalMapper>
 
 #define BUFFER_SIZE (1024 * 1024)
 #define TIMEOUT     (10 * 1000)
 
-HttpServer::HttpServer(quint16 port, Application* a, Dispatcher* d)
+HttpServer::HttpServer(const QString& host, quint16 port, Application* a, Dispatcher* d)
     : QTcpServer(a), dispatcher(d), app(a)
 {
-  listen(QHostAddress::LocalHost, port);
-  signalMapper = new QSignalMapper(this);
+  qDebug("Revisor is listening %s on port %d", host, port);
+  listen(QHostAddress(host), port);
 }
 
 void HttpServer::incomingConnection(int socket)

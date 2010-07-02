@@ -38,7 +38,7 @@ class Application : public QApplication
   char** argv;
   bool initArgtable();
   int portNumber;
-  QStringList listenInterfaces;
+  QString listeningInterface;
 
   HttpServer* httpServer;
   Dispatcher* dispatcher;

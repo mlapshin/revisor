@@ -7,6 +7,8 @@
 Application::Application(int _argc, char** _argv)
     : QApplication(_argc, _argv)
 {
+  listeningInterface = "127.0.0.1";
+  portNumber = 8080;
   argc = _argc;
   argv = _argv;
   setQuitOnLastWindowClosed(false);
@@ -15,7 +17,7 @@ Application::Application(int _argc, char** _argv)
 int Application::start() {
   if (initArgtable()) {
     dispatcher = new Dispatcher(this);
-    httpServer = new HttpServer(8080, this, dispatcher);
+    httpServer = new HttpServer(listeningInterface, portNumber, this, dispatcher);
     return exec();
   } else {
     return 0;
@@ -46,6 +48,15 @@ bool Application::initArgtable()
     return false;
   }
 
+  if (l->count > 0) {
+    listeningInterface.append(l->sval[0]);
+  }
+
+  if (p->count > 0) {
+    portNumber = *p->ival;
+  }
+
+  arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
   return true;
 }
 

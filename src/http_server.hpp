@@ -6,7 +6,6 @@
 #include "dispatcher.hpp"
 
 class Application;
-class QSignalMapper;
 
 class HttpServer : public QTcpServer
 {
@@ -14,7 +13,7 @@ class HttpServer : public QTcpServer
   Q_OBJECT;
 
  public:
-  HttpServer(quint16 port, Application* app, Dispatcher* d);
+  HttpServer(const QString& host, quint16 port, Application* app, Dispatcher* d);
   void incomingConnection(int socket);
 
  private slots:
@@ -28,7 +27,6 @@ class HttpServer : public QTcpServer
 
   Dispatcher* dispatcher;
   Application* app;
-  QSignalMapper* signalMapper;
   QMap<DeferredDispatcherResponseThread*, QTcpSocket*> deferredSocketsMap;
 };
 
