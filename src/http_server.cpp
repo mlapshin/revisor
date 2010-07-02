@@ -14,7 +14,7 @@
 HttpServer::HttpServer(const QString& host, quint16 port, Application* a, Dispatcher* d)
     : QTcpServer(a), dispatcher(d), app(a)
 {
-  qDebug("Revisor is listening %s on port %d", host, port);
+  qDebug() << "Revisor is listening" << host << "on port" << port;
   listen(QHostAddress(host), port);
 }
 
