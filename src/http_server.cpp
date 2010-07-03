@@ -59,7 +59,9 @@ void HttpServer::sendRawResponse(const QString& response, QTcpSocket* socket)
     os << "HTTP/1.0 200 OK\r\n"
         "Content-Type: text/html; charset=\"utf-8\"\r\n"
         "\r\n"
-        "<h1>OK</h1>\n";
+        "<h1>"
+       << (response.length() > 0 ? response : "OK")
+       << "</h1>\n";
   }
 
   socket->close();

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWaitCondition>
 #include <QMutex>
+#include <QVariant>
 
 class Session;
 class CountingNetworkAccessManager;
@@ -27,6 +28,7 @@ class SessionTab : public QObject
 
   void visit(const QString& url);
   bool waitForLoad(unsigned int timeout = 0);
+  QVariant evaluateScript(const QString& script);
 
  public slots:
   void updateTitle(const QString& t);

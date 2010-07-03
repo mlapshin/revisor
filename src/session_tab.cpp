@@ -4,6 +4,7 @@
 #include <QWebView>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QWebFrame>
 
 SessionTab::SessionTab(Session* s)
     : QObject(s), session(s), loadProgress(0)
@@ -52,6 +53,11 @@ bool SessionTab::waitForLoad(unsigned int t)
   pageLoadedMutex.unlock();
 
   return result;
+}
+
+QVariant SessionTab::evaluateScript(const QString& script)
+{
+  return webView->page()->mainFrame()->evaluateJavaScript(script);
 }
 
 void SessionTab::updateTitle(const QString& t)

@@ -15,21 +15,19 @@ DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d
 class WaitForLoadThread : public DeferredDispatcherResponseThread
 {
  public:
-  WaitForLoadThread(Dispatcher* d, int s, int t, Application* a)
-      : DeferredDispatcherResponseThread(d), sessionIndex(s), tabIndex(t), app(a) {}
+  WaitForLoadThread(Dispatcher* d, SessionTab* t)
+      : DeferredDispatcherResponseThread(d), tab(t) {}
   void run();
 
  private:
-  int sessionIndex;
-  int tabIndex;
-  Application* app;
+  SessionTab* tab;
 };
 
 void WaitForLoadThread::run()
 {
   QTime t;
   t.start();
-  app->getSession(sessionIndex)->getTab(tabIndex)->waitForLoad();
+  tab->waitForLoad();
   qDebug("Wait for load time: %.3f", t.elapsed() / 1000.0f);
 }
 
@@ -39,32 +37,62 @@ Dispatcher::Dispatcher(Application* a)
   app = a;
 }
 
-DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
+DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, const QScriptValue& command)
 {
   DispatcherResponse response;
-  QString commandName = command.property("name").toString();
-  qDebug() << "Received command " << commandName;
 
   if (commandName == "session.start") {
     app->startSession();
   } else if (commandName == "session.stop") {
     int sessionIndex = command.property("session_index").toInteger();
     app->stopSession(sessionIndex);
-  } else if (commandName == "session.tab.create") {
-    int sessionIndex = command.property("session_index").toInteger();
+  }
+
+  return response;
+}
+
+DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandName, const QScriptValue& command)
+{
+  DispatcherResponse response;
+  int sessionIndex = command.property("session_index").toInteger();
+  int tabIndex     = command.property("tab_index").toInteger();
+  QString url      = command.property("url").toString();
+  SessionTab* tab  = 0;
+
+  if (command.property("session_index").isValid() &&
+      command.property("tab_index").isValid()) {
+    tab = app->getSession(sessionIndex)->getTab(tabIndex);
+  }
+
+  if (commandName == "session.tab.create") {
     app->getSession(sessionIndex)->createTab();
   } else if (commandName == "session.tab.visit") {
-    int sessionIndex = command.property("session_index").toInteger();
-    int tabIndex     = command.property("tab_index").toInteger();
-    QString url      = command.property("url").toString();
-    app->getSession(sessionIndex)->getTab(tabIndex)->visit(url);
+    tab->visit(url);
   } else if (commandName == "session.tab.wait_for_load") {
-    int sessionIndex = command.property("session_index").toInteger();
-    int tabIndex     = command.property("tab_index").toInteger();
-
-    WaitForLoadThread* t = new WaitForLoadThread(this, sessionIndex, tabIndex, app);
+    WaitForLoadThread* t = new WaitForLoadThread(this, tab);
     t->start();
     response.deferredThread = t;
+  } else if (commandName == "session.tab.evaluate_script") {
+    QString script = command.property("script").toString();
+    response.response = tab->evaluateScript(script).toString();
+  }
+
+  return response;
+}
+
+DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
+{
+  DispatcherResponse response;
+  QString commandName = command.property("name").toString();
+  QStringList parsedCommandName = commandName.split(".");
+  qDebug() << "Received command " << commandName;
+
+  if (parsedCommandName[0] == "session") {
+    if (parsedCommandName[1] == "tab") {
+      return handleSessionTabCommand(commandName, command);
+    } else {
+      return handleSessionCommand(commandName, command);
+    }
   }
 
   return response;

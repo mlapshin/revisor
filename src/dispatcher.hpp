@@ -53,6 +53,10 @@ class Dispatcher: public QObject
   DispatcherResponse dispatch(const QScriptValue& command);
 
  private:
+
+  DispatcherResponse handleSessionCommand(const QString& commandName, const QScriptValue& cmd);
+  DispatcherResponse handleSessionTabCommand(const QString& commandName, const QScriptValue& cmd);
+
   Application* app;
 };
 
