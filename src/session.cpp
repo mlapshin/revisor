@@ -21,10 +21,11 @@ void SessionWindow::closeEvent(QCloseEvent* event)
   event->ignore();
 }
 
-Session::Session(Application* a)
+Session::Session(Application* a, const QString& n)
     : QObject(0)
 {
   app = a;
+  name = n;
   cookieJar = new QNetworkCookieJar(this);
 
   window = new SessionWindow();

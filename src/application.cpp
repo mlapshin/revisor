@@ -62,28 +62,30 @@ bool Application::initArgtable()
 
 Application::~Application()
 {
-  for(QList<Session*>::iterator i = sessions.begin(); i != sessions.end(); i++) {
+  for(SessionsMap::iterator i = sessions.begin(); i != sessions.end(); i++) {
     delete *i;
   }
+
+  sessions.clear();
 }
 
-int Application::startSession()
+Session* Application::startSession(const QString& name)
 {
-  Session* s = new Session(this);
-  sessions.append(s);
-  return sessions.length() - 1;
+  Session* s = new Session(this, name);
+  sessions.insert(name, s);
+  return s;
 }
 
-void Application::stopSession(int i)
+void Application::stopSession(const QString& name)
 {
-  if (i >= 0 && i < sessions.length()) {
-    Session* s = sessions[i];
-    sessions.removeAt(i);
+  if (sessions.contains(name)) {
+    Session* s = sessions[name];
+    sessions.remove(name);
     delete s;
   }
 }
 
-Session* Application::getSession(int i)
+Session* Application::getSession(const QString& name)
 {
-  return sessions[i];
+  return sessions.contains(name) ? sessions[name] : 0;
 }

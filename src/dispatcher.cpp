@@ -40,12 +40,12 @@ Dispatcher::Dispatcher(Application* a)
 DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, const QScriptValue& command)
 {
   DispatcherResponse response;
+  QString sessionName = command.property("session_name").toString();
 
   if (commandName == "session.start") {
-    app->startSession();
+    app->startSession(sessionName);
   } else if (commandName == "session.stop") {
-    int sessionIndex = command.property("session_index").toInteger();
-    app->stopSession(sessionIndex);
+    app->stopSession(sessionName);
   }
 
   return response;
@@ -54,18 +54,18 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
 DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandName, const QScriptValue& command)
 {
   DispatcherResponse response;
-  int sessionIndex = command.property("session_index").toInteger();
-  int tabIndex     = command.property("tab_index").toInteger();
-  QString url      = command.property("url").toString();
-  SessionTab* tab  = 0;
+  QString sessionName = command.property("session_name").toString();
+  int tabIndex        = command.property("tab_index").toInteger();
+  QString url         = command.property("url").toString();
+  SessionTab* tab     = 0;
 
-  if (command.property("session_index").isValid() &&
+  if (command.property("session_name").isValid() &&
       command.property("tab_index").isValid()) {
-    tab = app->getSession(sessionIndex)->getTab(tabIndex);
+    tab = app->getSession(sessionName)->getTab(tabIndex);
   }
 
   if (commandName == "session.tab.create") {
-    app->getSession(sessionIndex)->createTab();
+    app->getSession(sessionName)->createTab();
   } else if (commandName == "session.tab.visit") {
     tab->visit(url);
   } else if (commandName == "session.tab.wait_for_load") {

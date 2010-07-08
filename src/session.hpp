@@ -26,7 +26,7 @@ class Session : public QObject
   Q_OBJECT;
 
  public:
-  Session(Application* a);
+  Session(Application* a, const QString& n);
   ~Session();
 
   inline QNetworkCookieJar* getNetworkCookieJar() const {
@@ -39,6 +39,10 @@ class Session : public QObject
 
   inline QTabWidget* getTabWidget() const {
     return tabWidget;
+  }
+
+  inline const QString& getName() const {
+    return name;
   }
 
   unsigned int createTab();
@@ -59,6 +63,7 @@ class Session : public QObject
   QVBoxLayout* layout;
   QTabWidget* tabWidget;
   QList<SessionTab*> tabs;
+  QString name;
 };
 
 #endif /* _SESSION_H_ */

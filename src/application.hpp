@@ -14,16 +14,17 @@ class Session;
 class Application : public QApplication
 {
   Q_OBJECT;
+  typedef QMap<QString, Session*> SessionsMap;
 
  public:
   Application(int argc, char** argv);
   ~Application();
 
-  int startSession();
-  void stopSession(int index);
-  Session* getSession(int i);
+  Session* startSession(const QString& name);
+  void stopSession(const QString& name);
+  Session* getSession(const QString& name);
   inline int getSessionsCount() const {
-    return sessions.length();
+    return sessions.size();
   }
 
   QScriptEngine* getScriptEngine() {
@@ -42,7 +43,7 @@ class Application : public QApplication
 
   HttpServer* httpServer;
   Dispatcher* dispatcher;
-  QList<Session*> sessions;
+  SessionsMap sessions;
   QScriptEngine scriptEngine;
 };
 
