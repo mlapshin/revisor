@@ -6,8 +6,8 @@
 #include <QDebug>
 #include <QWebFrame>
 
-SessionTab::SessionTab(Session* s)
-    : QObject(s), session(s), loadProgress(0)
+SessionTab::SessionTab(Session* s, const QString& n)
+    : QObject(s), session(s), loadProgress(0), name(n)
 {
   networkManager = new CountingNetworkAccessManager(this);
   networkManager->setCookieJar(session->getNetworkCookieJar());

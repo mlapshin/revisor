@@ -42,30 +42,29 @@ Session::~Session()
   delete window;
 }
 
-unsigned int Session::createTab()
+SessionTab* Session::createTab(const QString& tabName)
 {
-  SessionTab* s = new SessionTab(this);
-  tabs.append(s);
+  SessionTab* s = new SessionTab(this, tabName);
+  tabs.insert(tabName, s);
   tabWidget->addTab(s->getWebView(), QString("New Tab"));
 
   connect(s,    SIGNAL(titleChanged(const QString&)),
           this, SLOT(updateTabTitle(const QString&)));
 
-  return tabs.length() - 1;
+  return s;
 }
 
 void Session::updateTabTitle(const QString& newTitle)
 {
-  // TODO: implemet me without sender() function
   SessionTab* s = qobject_cast<SessionTab*>(sender());
-  int idx = tabs.indexOf(s);
+  int idx = tabWidget->indexOf(s->getWebView());
   tabWidget->setTabText(idx, newTitle);
 }
 
-SessionTab* Session::getTab(int idx) const
+SessionTab* Session::getTab(const QString& tabName) const
 {
-  if (idx < tabs.length()) {
-    return tabs[idx];
+  if (tabs.contains(tabName)) {
+    return tabs[tabName];
   } else {
     return 0;
   }

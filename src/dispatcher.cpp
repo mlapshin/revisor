@@ -55,17 +55,17 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
 {
   DispatcherResponse response;
   QString sessionName = command.property("session_name").toString();
-  int tabIndex        = command.property("tab_index").toInteger();
+  QString tabName     = command.property("tab_name").toString();
   QString url         = command.property("url").toString();
   SessionTab* tab     = 0;
 
   if (command.property("session_name").isValid() &&
-      command.property("tab_index").isValid()) {
-    tab = app->getSession(sessionName)->getTab(tabIndex);
+      command.property("tab_name").isValid()) {
+    tab = app->getSession(sessionName)->getTab(tabName);
   }
 
   if (commandName == "session.tab.create") {
-    app->getSession(sessionName)->createTab();
+    app->getSession(sessionName)->createTab(tabName);
   } else if (commandName == "session.tab.visit") {
     tab->visit(url);
   } else if (commandName == "session.tab.wait_for_load") {

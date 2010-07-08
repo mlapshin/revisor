@@ -2,7 +2,7 @@
 #define _SESSION_H_
 
 #include <QObject>
-#include <QList>
+#include <QMap>
 #include <QWidget>
 
 class QNetworkCookieJar;
@@ -24,9 +24,10 @@ class SessionWindow : public QWidget
 class Session : public QObject
 {
   Q_OBJECT;
+  typedef QMap<QString, SessionTab*> SessionTabsMap;
 
  public:
-  Session(Application* a, const QString& n);
+  Session(Application* a, const QString& name);
   ~Session();
 
   inline QNetworkCookieJar* getNetworkCookieJar() const {
@@ -45,13 +46,13 @@ class Session : public QObject
     return name;
   }
 
-  unsigned int createTab();
+  SessionTab* createTab(const QString& tabName);
 
-  inline unsigned int getTabsCount() const {
-    return tabs.length();
+  inline int getTabsCount() const {
+    return tabs.size();
   }
 
-  SessionTab* getTab(int idx) const;
+  SessionTab* getTab(const QString& tabName) const;
 
  private slots:
   void updateTabTitle(const QString& newTabTitle);
@@ -62,7 +63,7 @@ class Session : public QObject
   SessionWindow* window;
   QVBoxLayout* layout;
   QTabWidget* tabWidget;
-  QList<SessionTab*> tabs;
+  SessionTabsMap tabs;
   QString name;
 };
 

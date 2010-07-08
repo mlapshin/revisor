@@ -15,7 +15,7 @@ class SessionTab : public QObject
 {
   Q_OBJECT;
  public:
-  SessionTab(Session* s);
+  SessionTab(Session* s, const QString& name);
   ~SessionTab();
 
   inline CountingNetworkAccessManager* getNetworkAccessManager() const {
@@ -24,6 +24,10 @@ class SessionTab : public QObject
 
   inline QWebView* getWebView() const {
     return webView;
+  }
+
+  inline const QString& getName() const {
+    return name;
   }
 
   void visit(const QString& url);
@@ -49,6 +53,7 @@ class SessionTab : public QObject
   QWebView* webView;
   QString pageTitle;
   int loadProgress;
+  QString name;
 };
 
 #endif /* _SESSION_TAB_H_ */

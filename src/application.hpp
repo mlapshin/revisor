@@ -2,7 +2,7 @@
 #define _APPLICATION_H_
 
 #include <QApplication>
-#include <QList>
+#include <QMap>
 #include <QStringList>
 #include <QScriptEngine>
 #include <argtable2.h>
