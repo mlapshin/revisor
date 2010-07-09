@@ -31,6 +31,9 @@ class SessionTab : public QObject
     return name;
   }
 
+  void setConfirmAnswer(bool a);
+  void setPromptAnswer(const QString& a, bool canceled);
+
   void visit(const QString& url);
   bool waitForLoad(unsigned int timeout = 0);
   QVariant evaluateScript(const QString& script);
