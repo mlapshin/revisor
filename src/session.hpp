@@ -10,15 +10,18 @@ class Application;
 class QVBoxLayout;
 class QTabWidget;
 class SessionTab;
-class SessionWindow;
+class Session;
 
 class SessionWindow : public QWidget
 {
   Q_OBJECT;
 
  public:
-  SessionWindow();
+  SessionWindow(Session* s);
   void closeEvent(QCloseEvent* event);
+
+ protected:
+  Session* session;
 };
 
 class Session : public QObject

@@ -1,6 +1,7 @@
 #include "session_tab.hpp"
 #include "session.hpp"
 #include "counting_network_access_manager.hpp"
+#include "web_page.hpp"
 #include <QWebView>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -12,9 +13,12 @@ SessionTab::SessionTab(Session* s, const QString& n)
   networkManager = new CountingNetworkAccessManager(this);
   networkManager->setCookieJar(session->getNetworkCookieJar());
 
+  webPage = new WebPage(this);
+  webPage->setNetworkAccessManager(networkManager);
+
   QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
   webView = new QWebView(window);
-  webView->page()->setNetworkAccessManager(networkManager);
+  webView->setPage(webPage);
   webView->setDisabled(true);
 
   connect(webView, SIGNAL(titleChanged(const QString&)),
@@ -90,6 +94,7 @@ void SessionTab::_updateTabTitle()
     title += QString(" (%1%)").arg(loadProgress);
   }
 
+  title += QString(" [%1]").arg(name);
   titleChanged(title);
 }
 

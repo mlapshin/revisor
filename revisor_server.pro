@@ -6,7 +6,8 @@ HEADERS =   src/http_server.hpp \
             src/dispatcher.hpp \
             src/session.hpp \
             src/session_tab.hpp \
-            src/counting_network_access_manager.hpp
+            src/counting_network_access_manager.hpp \
+            src/web_page.hpp
 
 SOURCES =   src/main.cpp \
             src/http_server.cpp \
@@ -14,4 +15,5 @@ SOURCES =   src/main.cpp \
             src/dispatcher.cpp \
             src/session.cpp \
             src/session_tab.cpp \
-            src/counting_network_access_manager.cpp
+            src/counting_network_access_manager.cpp \
+            src/web_page.cpp

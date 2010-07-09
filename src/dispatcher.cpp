@@ -15,19 +15,20 @@ DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d
 class WaitForLoadThread : public DeferredDispatcherResponseThread
 {
  public:
-  WaitForLoadThread(Dispatcher* d, SessionTab* t)
-      : DeferredDispatcherResponseThread(d), tab(t) {}
+  WaitForLoadThread(Dispatcher* d, SessionTab* t, int to)
+      : DeferredDispatcherResponseThread(d), tab(t), timeout(to) {}
   void run();
 
  private:
   SessionTab* tab;
+  unsigned int timeout;
 };
 
 void WaitForLoadThread::run()
 {
   QTime t;
   t.start();
-  tab->waitForLoad();
+  tab->waitForLoad(timeout);
   qDebug("Wait for load time: %.3f", t.elapsed() / 1000.0f);
 }
 
@@ -69,10 +70,15 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
   } else if (commandName == "session.tab.visit") {
     tab->visit(url);
   } else if (commandName == "session.tab.wait_for_load") {
-    WaitForLoadThread* t = new WaitForLoadThread(this, tab);
+    int timeout = 0;
+    if (command.property("timeout").isValid()) {
+      timeout = command.property("timeout").toInteger();
+    }
+
+    WaitForLoadThread* t = new WaitForLoadThread(this, tab, timeout);
     t->start();
     response.deferredThread = t;
-  } else if (commandName == "session.tab.evaluate_script") {
+  } else if (commandName == "session.tab.evaluate_javascript") {
     QString script = command.property("script").toString();
     response.response = tab->evaluateScript(script).toString();
   }

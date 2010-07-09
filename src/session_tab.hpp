@@ -9,6 +9,7 @@
 class Session;
 class CountingNetworkAccessManager;
 class QWebView;
+class WebPage;
 class QNetworkReply;
 
 class SessionTab : public QObject
@@ -51,6 +52,7 @@ class SessionTab : public QObject
   CountingNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
+  WebPage* webPage;
   QString pageTitle;
   int loadProgress;
   QString name;

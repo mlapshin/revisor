@@ -9,11 +9,11 @@
 #include <QDebug>
 #include <QCloseEvent>
 
-SessionWindow::SessionWindow()
-    : QWidget()
+SessionWindow::SessionWindow(Session* s)
+    : QWidget(), session(s)
 {
   resize(800, 600);
-  setWindowTitle("Revisor Session");
+  setWindowTitle(QString("%1 [Revisor]").arg(session->getName()));
 }
 
 void SessionWindow::closeEvent(QCloseEvent* event)
@@ -28,7 +28,7 @@ Session::Session(Application* a, const QString& n)
   name = n;
   cookieJar = new QNetworkCookieJar(this);
 
-  window = new SessionWindow();
+  window = new SessionWindow(this);
   layout = new QVBoxLayout;
   tabWidget = new QTabWidget(window);
   window->setLayout(layout);
