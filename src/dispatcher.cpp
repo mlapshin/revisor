@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QScriptValueIterator>
 #include <QTime>
+#include "exception.hpp"
+#include "json.hpp"
 
 DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d)
     : QThread(d), dispatcher(d)
@@ -28,8 +30,8 @@ void WaitForLoadThread::run()
 {
   QTime t;
   t.start();
-  tab->waitForLoad(timeout);
-  qDebug("Wait for load time: %.3f", t.elapsed() / 1000.0f);
+  bool timedOut = !tab->waitForLoad(timeout);
+  response = JSON::response("OK", JSON::keyValue("timedOut", timedOut) + ", " + JSON::keyValue("elapsedTime", t.elapsed()));
 }
 
 Dispatcher::Dispatcher(Application* a)
@@ -80,7 +82,9 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     response.deferredThread = t;
   } else if (commandName == "session.tab.evaluate_javascript") {
     QString script = command.property("script").toString();
-    response.response = tab->evaluateScript(script).toString();
+    QVariant res = tab->evaluateScript(script);
+
+    response.response = JSON::response("OK", JSON::keyValue("evalResult", res));
   } else if (commandName == "session.tab.set_confirm_answer") {
     bool answer = command.property("answer").toBoolean();
     tab->setConfirmAnswer(answer);
@@ -96,16 +100,24 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
 DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
 {
   DispatcherResponse response;
-  QString commandName = command.property("name").toString();
-  QStringList parsedCommandName = commandName.split(".");
-  qDebug() << "Received command " << commandName;
 
-  if (parsedCommandName[0] == "session") {
-    if (parsedCommandName[1] == "tab") {
-      return handleSessionTabCommand(commandName, command);
-    } else {
-      return handleSessionCommand(commandName, command);
+  try {
+    QString commandName = command.property("name").toString();
+    QStringList parsedCommandName = commandName.split(".");
+
+    if (parsedCommandName[0] == "session") {
+      if (parsedCommandName[1] == "tab") {
+        response = handleSessionTabCommand(commandName, command);
+      } else {
+        response = handleSessionCommand(commandName, command);
+      }
     }
+  } catch (Exception& e) {
+    response.response = JSON::response("Error", JSON::keyValue("message", e.getMessage()));
+  }
+
+  if (response.response.isEmpty()) {
+    response.response = JSON::response("OK");
   }
 
   return response;

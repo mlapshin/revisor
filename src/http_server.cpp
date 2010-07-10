@@ -53,16 +53,10 @@ void HttpServer::sendRawResponse(const QString& response, QTcpSocket* socket)
 {
   QTextStream os(socket);
 
-  if (response.length() > 0) {
-    os << response;
-  } else {
-    os << "HTTP/1.0 200 OK\r\n"
-        "Content-Type: text/html; charset=\"utf-8\"\r\n"
-        "\r\n"
-        "<h1>"
-       << (response.length() > 0 ? response : "OK")
-       << "</h1>\n";
-  }
+  os << "HTTP/1.0 200 OK\r\n"
+      "Content-Type: text/plain; charset=\"utf-8\"\r\n"
+      "\r\n"
+     << response;
 
   socket->close();
   if (socket->state() == QTcpSocket::UnconnectedState) {
