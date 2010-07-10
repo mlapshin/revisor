@@ -42,6 +42,8 @@ Dispatcher::Dispatcher(Application* a)
 
 DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, const QScriptValue& command)
 {
+  assertParamPresent(command, "session_name");
+
   DispatcherResponse response;
   QString sessionName = command.property("session_name").toString();
 
@@ -56,10 +58,12 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
 
 DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandName, const QScriptValue& command)
 {
+  assertParamPresent(command, "session_name");
+  assertParamPresent(command, "tab_name");
+
   DispatcherResponse response;
   QString sessionName = command.property("session_name").toString();
   QString tabName     = command.property("tab_name").toString();
-  QString url         = command.property("url").toString();
   SessionTab* tab     = 0;
 
   if (command.property("session_name").isValid() &&
@@ -70,6 +74,9 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
   if (commandName == "session.tab.create") {
     app->getSession(sessionName)->createTab(tabName);
   } else if (commandName == "session.tab.visit") {
+    assertParamPresent(command, "url");
+    QString url = command.property("url").toString();
+
     tab->visit(url);
   } else if (commandName == "session.tab.wait_for_load") {
     int timeout = 0;
@@ -81,14 +88,19 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     t->start();
     response.deferredThread = t;
   } else if (commandName == "session.tab.evaluate_javascript") {
+    assertParamPresent(command, "script");
     QString script = command.property("script").toString();
     QVariant res = tab->evaluateScript(script);
 
     response.response = JSON::response("OK", JSON::keyValue("evalResult", res));
   } else if (commandName == "session.tab.set_confirm_answer") {
+    assertParamPresent(command, "answer");
     bool answer = command.property("answer").toBoolean();
     tab->setConfirmAnswer(answer);
   } else if (commandName == "session.tab.set_prompt_answer") {
+    assertParamPresent(command, "cancelled");
+    assertParamPresent(command, "answer");
+
     bool cancelled = command.property("cancelled").toBoolean();
     QString answer = command.property("answer").toString();
     tab->setPromptAnswer(answer, cancelled);
@@ -121,4 +133,13 @@ DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
   }
 
   return response;
+}
+
+void Dispatcher::assertParamPresent(const QScriptValue& c, const QString& p)
+{
+  QScriptValue s = c.property(p);
+
+  if (!s.isValid()) {
+    throw Exception(QString("Parameter '%1' required").arg(p));
+  }
 }

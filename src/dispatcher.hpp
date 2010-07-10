@@ -54,6 +54,8 @@ class Dispatcher: public QObject
 
  private:
 
+  static void assertParamPresent(const QScriptValue& c, const QString& p);
+
   DispatcherResponse handleSessionCommand(const QString& commandName, const QScriptValue& cmd);
   DispatcherResponse handleSessionTabCommand(const QString& commandName, const QScriptValue& cmd);
 
