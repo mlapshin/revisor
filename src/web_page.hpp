@@ -13,12 +13,9 @@ class WebPage : public QWebPage
     confirmAnswer = a;
   }
 
-  inline void setPromptCanceled(bool canceled) {
-    promptCanceled = canceled;
-  }
-
-  inline void setPromptAnswer(const QString& a) {
-    promptAnswer = a;
+  inline void setPromptAnswer(const QString& answer, bool cancelled) {
+    promptAnswer = answer;
+    promptCancelled = cancelled;
   }
 
  protected:
@@ -34,7 +31,7 @@ class WebPage : public QWebPage
 
  private:
   bool confirmAnswer;
-  bool promptCanceled;
+  bool promptCancelled;
   QString promptAnswer;
 };
 

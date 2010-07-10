@@ -59,6 +59,16 @@ bool SessionTab::waitForLoad(unsigned int t)
   return result;
 }
 
+void SessionTab::setConfirmAnswer(bool a)
+{
+  webPage->setConfirmAnswer(a);
+}
+
+void SessionTab::setPromptAnswer(const QString& a, bool cancelled)
+{
+  webPage->setPromptAnswer(a, cancelled);
+}
+
 QVariant SessionTab::evaluateScript(const QString& script)
 {
   return webView->page()->mainFrame()->evaluateJavaScript(script);

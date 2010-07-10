@@ -81,6 +81,13 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
   } else if (commandName == "session.tab.evaluate_javascript") {
     QString script = command.property("script").toString();
     response.response = tab->evaluateScript(script).toString();
+  } else if (commandName == "session.tab.set_confirm_answer") {
+    bool answer = command.property("answer").toBoolean();
+    tab->setConfirmAnswer(answer);
+  } else if (commandName == "session.tab.set_prompt_answer") {
+    bool cancelled = command.property("cancelled").toBoolean();
+    QString answer = command.property("answer").toString();
+    tab->setPromptAnswer(answer, cancelled);
   }
 
   return response;
