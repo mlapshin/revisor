@@ -11,3 +11,38 @@ Revisor is **NOT** production-ready yet, but who cares? As developer,
 you should definitely give him a try. And of course, Revisor is under
 active development, so all your patches and suggestions are welcome.
 
+Why Revisor is better?
+----------
+
+Or "Why Selenium sucks?" Because:
+
+* It's lightweight and easy to use. You don't need to run Big Firefox
+  with all it's unnecessary GUI and plugins.
+* It allows to have completely separate "sessions" within one
+  process. With Selenium you need to start as many Firefox instances,
+  as many sessions you need.
+* Revisor could be used from almost any environment, because it uses
+  HTTP and JSON to communicate with clients.
+
+Quick overview
+----------
+
+Revisor is a small HTTP server combined with small WebKit renderer. It
+listens for HTTP commands and executes them. Commands are hashes
+serialized to JSON. Responses are JSON too. You just create a command,
+send it to Revisor and get response. Very simple. Obey.
+
+Compilation
+----------
+
+You need Qt 4.6 and argtable2 to compile Revisor.
+
+    $ sudo apt-get install libqt4-dev libargtable2-dev
+    $ mkdir build && cd build
+    $ qmake ../revisor_server.pro
+    $ make
+    
+Command reference
+----------
+
+To be written.
