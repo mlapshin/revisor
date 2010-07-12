@@ -6,10 +6,20 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QWebFrame>
+#include <QThread>
+
+class SleepyThread : public QThread
+{
+ public:
+  static void msleep(unsigned long msec) {
+    QThread::msleep(msec);
+  }
+};
 
 SessionTab::SessionTab(Session* s, const QString& n)
     : QObject(s), session(s), loadProgress(0), name(n)
 {
+  successfullLoad = false;
   networkManager = new CountingNetworkAccessManager(this);
   networkManager->setCookieJar(session->getNetworkCookieJar());
 
@@ -41,13 +51,13 @@ SessionTab::~SessionTab()
 
 void SessionTab::visit(const QString& url)
 {
+  successfullLoad = false;
   webView->load(url);
 }
 
 bool SessionTab::waitForLoad(unsigned int t)
 {
   unsigned long timeout = t;
-
   if (t == 0) {
     timeout = ULONG_MAX;
   }
@@ -88,6 +98,7 @@ void SessionTab::updateProgress(int p)
 
 void SessionTab::loadFinished(bool success)
 {
+  successfullLoad = success;
   loadProgress = 100;
   _updateTabTitle();
 
@@ -110,4 +121,25 @@ void SessionTab::_updateTabTitle()
 
 void SessionTab::singleRequestFinished(QNetworkReply* reply)
 {
+  if (networkManager->getRequestsCount() == 0) {
+    requestsFinished.wakeAll();
+  }
+}
+
+void SessionTab::waitForAllRequestsFinished(unsigned int waitBefore, unsigned int waitAfter, unsigned int waitTimeout)
+{
+  bool finished = false;
+  unsigned long timeout = waitTimeout == 0 ? ULONG_MAX : waitTimeout;
+
+  SleepyThread::msleep(waitBefore);
+  while (!finished) {
+    requestsFinishedMutex.lock();
+    requestsFinished.wait(&requestsFinishedMutex, timeout);
+    requestsFinishedMutex.unlock();
+    SleepyThread::msleep(waitAfter);
+
+    if (networkManager->getRequestsCount() == 0) {
+      finished = true;
+    }
+  }
 }

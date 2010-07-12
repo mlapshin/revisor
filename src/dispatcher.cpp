@@ -8,6 +8,16 @@
 #include "exception.hpp"
 #include "json.hpp"
 
+#define ARG_FROM_COMMAND(ctype, var, name, type, default) \
+  ctype var = default; \
+  if (command.property(name).isValid()) { \
+    if (!command.property(name).is ## type ()) { \
+      throw Exception("Parameter " name " should have type " #type); \
+    } else { \
+      var = command.property(name).to ## type (); \
+    } \
+  }
+
 DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d)
     : QThread(d), dispatcher(d)
 {
@@ -19,20 +29,43 @@ class WaitForLoadThread : public DeferredDispatcherResponseThread
  public:
   WaitForLoadThread(Dispatcher* d, SessionTab* t, int to)
       : DeferredDispatcherResponseThread(d), tab(t), timeout(to) {}
-  void run();
+
+  void run()
+  {
+    QTime t;
+    t.start();
+    bool timedOut = !tab->waitForLoad(timeout);
+    bool successfull = tab->isLoadSuccessfull();
+
+    response = JSON::response("OK", JSON::keyValue("timedOut", timedOut) + ", " + JSON::keyValue("elapsedTime", t.elapsed()) + ", " + JSON::keyValue("successfull", successfull));
+  }
 
  private:
   SessionTab* tab;
   unsigned int timeout;
 };
 
-void WaitForLoadThread::run()
+class WaitForAllRequestsFinishedThread : public DeferredDispatcherResponseThread
 {
-  QTime t;
-  t.start();
-  bool timedOut = !tab->waitForLoad(timeout);
-  response = JSON::response("OK", JSON::keyValue("timedOut", timedOut) + ", " + JSON::keyValue("elapsedTime", t.elapsed()));
-}
+ public:
+  WaitForAllRequestsFinishedThread(Dispatcher* d, SessionTab* t, int to, unsigned int b, unsigned int a)
+      : DeferredDispatcherResponseThread(d), tab(t), timeout(to), waitBefore(b), waitAfter(a) {}
+
+  void run()
+  {
+    QTime t;
+    t.start();
+    tab->waitForAllRequestsFinished(waitBefore, waitAfter, timeout);
+
+    response = JSON::response("OK", JSON::keyValue("elapsedTime", t.elapsed()));
+  }
+
+ private:
+  SessionTab* tab;
+  unsigned int timeout;
+  unsigned int waitBefore;
+  unsigned int waitAfter;
+};
 
 Dispatcher::Dispatcher(Application* a)
     : QObject(a)
@@ -87,6 +120,14 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     WaitForLoadThread* t = new WaitForLoadThread(this, tab, timeout);
     t->start();
     response.deferredThread = t;
+  } else if (commandName == "session.tab.wait_for_all_requests_finished") {
+    ARG_FROM_COMMAND(unsigned int, timeout, "timeout", Number, 0);
+    ARG_FROM_COMMAND(unsigned int, waitBefore, "waitBefore", Number, 0);
+    ARG_FROM_COMMAND(unsigned int, waitAfter, "waitAfter", Number, 0);
+
+    WaitForAllRequestsFinishedThread* t = new WaitForAllRequestsFinishedThread(this, tab, timeout, waitBefore, waitAfter);
+    t->start();
+    response.deferredThread = t;
   } else if (commandName == "session.tab.evaluate_javascript") {
     assertParamPresent(command, "script");
     QString script = command.property("script").toString();
@@ -124,8 +165,10 @@ DispatcherResponse Dispatcher::dispatch(const QScriptValue& command)
         response = handleSessionCommand(commandName, command);
       }
     }
-  } catch (Exception& e) {
-    response.response = JSON::response("Error", JSON::keyValue("message", e.getMessage()));
+  } catch (std::exception& e) {
+    response.response = JSON::response("Error", JSON::keyValue("message", QString(e.what())));
+  } catch (...) {
+    response.response = JSON::response("Error", JSON::keyValue("message", "Unknown error"));
   }
 
   if (response.response.isEmpty()) {

@@ -31,11 +31,16 @@ class SessionTab : public QObject
     return name;
   }
 
+  inline bool isLoadSuccessfull() const {
+    return successfullLoad;
+  }
+
   void setConfirmAnswer(bool a);
   void setPromptAnswer(const QString& a, bool canceled);
 
   void visit(const QString& url);
   bool waitForLoad(unsigned int timeout = 0);
+  void waitForAllRequestsFinished(unsigned int waitBefore = 0, unsigned int waitAfter = 0, unsigned int waitTimeout = 0);
   QVariant evaluateScript(const QString& script);
 
  public slots:
@@ -52,6 +57,10 @@ class SessionTab : public QObject
 
   QWaitCondition pageLoaded;
   QMutex pageLoadedMutex;
+
+  QWaitCondition requestsFinished;
+  QMutex requestsFinishedMutex;
+
   CountingNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
@@ -59,6 +68,7 @@ class SessionTab : public QObject
   QString pageTitle;
   int loadProgress;
   QString name;
+  bool successfullLoad;
 };
 
 #endif /* _SESSION_TAB_H_ */
