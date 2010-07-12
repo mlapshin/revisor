@@ -75,10 +75,9 @@ Dispatcher::Dispatcher(Application* a)
 
 DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, const QScriptValue& command)
 {
-  assertParamPresent(command, "session_name");
-
   DispatcherResponse response;
-  QString sessionName = command.property("session_name").toString();
+  assertParamPresent(command, "session_name");
+  ARG_FROM_COMMAND(QString, sessionName, "session_name", String, "");
 
   if (commandName == "session.start") {
     app->startSession(sessionName);
@@ -95,8 +94,8 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
   assertParamPresent(command, "tab_name");
 
   DispatcherResponse response;
-  QString sessionName = command.property("session_name").toString();
-  QString tabName     = command.property("tab_name").toString();
+  ARG_FROM_COMMAND(QString, sessionName, "session_name", String, "");
+  ARG_FROM_COMMAND(QString, tabName, "tab_name", String, "");
   SessionTab* tab     = 0;
 
   if (command.property("session_name").isValid() &&
@@ -108,18 +107,16 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     app->getSession(sessionName)->createTab(tabName);
   } else if (commandName == "session.tab.visit") {
     assertParamPresent(command, "url");
-    QString url = command.property("url").toString();
-
+    ARG_FROM_COMMAND(QString, url, "url", String, "");
     tab->visit(url);
+
   } else if (commandName == "session.tab.wait_for_load") {
-    int timeout = 0;
-    if (command.property("timeout").isValid()) {
-      timeout = command.property("timeout").toInteger();
-    }
+    ARG_FROM_COMMAND(unsigned int, timeout, "timeout", Number, 0);
 
     WaitForLoadThread* t = new WaitForLoadThread(this, tab, timeout);
     t->start();
     response.deferredThread = t;
+
   } else if (commandName == "session.tab.wait_for_all_requests_finished") {
     ARG_FROM_COMMAND(unsigned int, timeout, "timeout", Number, 0);
     ARG_FROM_COMMAND(unsigned int, waitBefore, "waitBefore", Number, 0);
@@ -128,22 +125,25 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     WaitForAllRequestsFinishedThread* t = new WaitForAllRequestsFinishedThread(this, tab, timeout, waitBefore, waitAfter);
     t->start();
     response.deferredThread = t;
+
   } else if (commandName == "session.tab.evaluate_javascript") {
     assertParamPresent(command, "script");
-    QString script = command.property("script").toString();
-    QVariant res = tab->evaluateScript(script);
+    ARG_FROM_COMMAND(QString, script, "script", String, "");
 
+    QVariant res = tab->evaluateScript(script);
     response.response = JSON::response("OK", JSON::keyValue("evalResult", res));
+
   } else if (commandName == "session.tab.set_confirm_answer") {
     assertParamPresent(command, "answer");
-    bool answer = command.property("answer").toBoolean();
+    ARG_FROM_COMMAND(bool, answer, "answer", Boolean, false);
     tab->setConfirmAnswer(answer);
+
   } else if (commandName == "session.tab.set_prompt_answer") {
     assertParamPresent(command, "cancelled");
     assertParamPresent(command, "answer");
+    ARG_FROM_COMMAND(bool, cancelled, "cancelled", Boolean, false);
+    ARG_FROM_COMMAND(QString, answer, "answer", String, "");
 
-    bool cancelled = command.property("cancelled").toBoolean();
-    QString answer = command.property("answer").toString();
     tab->setPromptAnswer(answer, cancelled);
   }
 
