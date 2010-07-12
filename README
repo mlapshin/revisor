@@ -1,0 +1,13 @@
+Revisor
+===================
+
+Revisor is an remotely-controlled lightweight browser mainly designed
+for integration testing and automating tasks. It's based on
+C++/Qt4/WebKit and is cross-platform, fast, and memory efficient
+(well, at least it should be). Revisor was designed with minimalistic
+approach in mind, so it aims to have less features and small codebase.
+
+Revisor is **NOT** production-ready yet, but who cares? As developer,
+you should definitely give him a try. And of course, Revisor is under
+active development, so all your patches and suggestions are welcome.
+
