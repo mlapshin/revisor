@@ -9,7 +9,7 @@ class JSON
  public:
   template<typename T> static QString keyValue(const QString& key, const T& value)
   {
-    return key + ": " + JSON::toJSON(value);
+    return "\"" + key + "\": " + JSON::toJSON(value);
   }
 
   static QString response(const QString& code, const QString& additional = "");

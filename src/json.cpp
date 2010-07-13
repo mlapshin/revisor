@@ -59,5 +59,5 @@ QString JSON::toJSON(const QVariant& v)
 
 QString JSON::response(const QString& code, const QString& additional)
 {
-  return QString("{ result: \"%1\" %2 }").arg(code).arg(additional.isEmpty() ? "" : ", " + additional);
+  return QString("{ \"result\": \"%1\" %2 }").arg(code).arg(additional.isEmpty() ? "" : ", " + additional);
 }
