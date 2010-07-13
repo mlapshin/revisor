@@ -26,7 +26,7 @@ int Application::start() {
 
 bool Application::initArgtable()
 {
-  const char* progname = "revisor_server";
+  const char* progname = "revisor";
   struct arg_str* l   = arg_str0("l", NULL, "<interface>",   "Interface to listen, default '127.0.0.1'");
   struct arg_int* p   = arg_int0("p", NULL, "<port number>", "Port to listen, default 8080");
   struct arg_lit* h   = arg_lit0("h", "help",                "This help message");
