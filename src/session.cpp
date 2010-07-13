@@ -54,6 +54,15 @@ SessionTab* Session::createTab(const QString& tabName)
   return s;
 }
 
+void Session::destroyTab(const QString& tabName)
+{
+  if (tabs.contains(tabName)) {
+    SessionTab* s = tabs[tabName];
+    delete s;
+    tabs.remove(tabName);
+  }
+}
+
 void Session::updateTabTitle(const QString& newTitle)
 {
   SessionTab* s = qobject_cast<SessionTab*>(sender());

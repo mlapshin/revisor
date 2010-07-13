@@ -11,6 +11,14 @@ Revisor is **NOT** production-ready yet, but who cares? As developer,
 you should definitely give him a try. And of course, Revisor is under
 active development, so all your patches and suggestions are welcome.
 
+Quick overview
+----------
+
+Revisor is a small HTTP server combined with small WebKit renderer. It
+listens for HTTP commands and executes them. Commands are hashes
+serialized to JSON. Responses are JSON hashes too. You just create a
+command, send it to Revisor and get response. Very simple. Obey.
+
 Why Revisor is better?
 ----------
 
@@ -18,31 +26,79 @@ Or "Why Selenium sucks?" Because:
 
 * It's lightweight and easy to use. You don't need to run Big Firefox
   with all it's unnecessary GUI and plugins.
-* It allows to have completely separate "sessions" within one
+* It allows to have completely separate "sessions" within one Revisor
   process. With Selenium you need to start as many Firefox instances,
   as many sessions you need.
 * Revisor could be used from almost any environment, because it uses
   HTTP and JSON to communicate with clients.
 
-Quick overview
-----------
-
-Revisor is a small HTTP server combined with small WebKit renderer. It
-listens for HTTP commands and executes them. Commands are hashes
-serialized to JSON. Responses are JSON too. You just create a command,
-send it to Revisor and get response. Very simple. Obey.
-
 Compilation
 ----------
 
-You need Qt 4.6 and argtable2 to compile Revisor.
+You need Qt 4.6 and ArgTable2 to compile Revisor.
 
     $ sudo apt-get install libqt4-dev libargtable2-dev
     $ mkdir build && cd build
     $ qmake ../revisor_server.pro
     $ make
-    
+
 Command reference
 ----------
 
-To be written.
+### session.start ###
+Starts a new session.
+
+* `session_name` - name to use for created session
+
+### session.stop ###
+Stops existing session and closes all tabs associated with it.
+
+* `session_name` - session name to stop
+
+### session.tab.create ###
+Creates a tab within a running session.
+
+* `session_name` - existing session name
+* `tab_name` - name to use for newly created tab
+
+### session.tab.destroy ###
+Destroys an existing tab.
+
+* `session_name` - session name
+* `tab_name` - tab name to destroy
+
+### session.tab.visit ###
+Open URL in tab.
+
+* `session_name` - existing session name
+* `tab_name` - tab to use
+* `url` - URL to open
+
+### session.tab.wait\_for\_load ###
+Waits for page load. If page is already loaded, returns immediately.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `timeout` - wait timeout in msec, default is **0** (no timeout) [optional]
+
+### session.tab.evaluate\_javascript ###
+Executes JavaScript in tab context and returns value of last statement.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `script` - script source to execute
+
+### session.tab.set\_confirm\_answer ###
+Sets answer for JavaScript confirm() function.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `answer` - answer in boolean representation (OK - true, Cancel - false)
+
+### session.tab.set\_prompt\_answer ###
+Sets answer for JavaScript prompt() function.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `answer` - string answer
+* `cancelled` - boolean value indicates if 'Cancel' button was pressed

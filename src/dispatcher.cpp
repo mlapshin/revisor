@@ -96,7 +96,7 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
   DispatcherResponse response;
   ARG_FROM_COMMAND(QString, sessionName, "session_name", String, "");
   ARG_FROM_COMMAND(QString, tabName, "tab_name", String, "");
-  SessionTab* tab     = 0;
+  SessionTab* tab = 0;
 
   if (command.property("session_name").isValid() &&
       command.property("tab_name").isValid()) {
@@ -105,6 +105,8 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
 
   if (commandName == "session.tab.create") {
     app->getSession(sessionName)->createTab(tabName);
+  } else if (commandName == "session.tab.destroy") {
+    app->getSession(sessionName)->destroyTab(tabName);
   } else if (commandName == "session.tab.visit") {
     assertParamPresent(command, "url");
     ARG_FROM_COMMAND(QString, url, "url", String, "");

@@ -50,6 +50,7 @@ class Session : public QObject
   }
 
   SessionTab* createTab(const QString& tabName);
+  void destroyTab(const QString& name);
 
   inline int getTabsCount() const {
     return tabs.size();
