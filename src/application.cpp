@@ -3,6 +3,7 @@
 #include "dispatcher.hpp"
 #include "session.hpp"
 #include <QDebug>
+#include "exception.hpp"
 
 Application::Application(int _argc, char** _argv)
     : QApplication(_argc, _argv)
@@ -14,7 +15,8 @@ Application::Application(int _argc, char** _argv)
   setQuitOnLastWindowClosed(false);
 }
 
-int Application::start() {
+int Application::start()
+{
   if (initArgtable()) {
     dispatcher = new Dispatcher(this);
     httpServer = new HttpServer(listeningInterface, portNumber, this, dispatcher);
@@ -71,9 +73,13 @@ Application::~Application()
 
 Session* Application::startSession(const QString& name)
 {
-  Session* s = new Session(this, name);
-  sessions.insert(name, s);
-  return s;
+  if (sessions.contains(name)) {
+    throw Exception(QString("Session with name '%1' already exists").arg(name));
+  } else {
+    Session* s = new Session(this, name);
+    sessions.insert(name, s);
+    return s;
+  }
 }
 
 void Application::stopSession(const QString& name)
@@ -82,6 +88,8 @@ void Application::stopSession(const QString& name)
     Session* s = sessions[name];
     sessions.remove(name);
     delete s;
+  } else {
+    throw Exception(QString("Session with name '%1' does not exists").arg(name));
   }
 }
 

@@ -1,6 +1,7 @@
 #include "session.hpp"
 #include "application.hpp"
 #include "session_tab.hpp"
+#include "exception.hpp"
 #include <QNetworkCookieJar>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -44,14 +45,18 @@ Session::~Session()
 
 SessionTab* Session::createTab(const QString& tabName)
 {
-  SessionTab* s = new SessionTab(this, tabName);
-  tabs.insert(tabName, s);
-  tabWidget->addTab(s->getWebView(), QString("New Tab"));
+  if (tabs.contains(name)) {
+    throw Exception(QString("Session tab with name '%1' already exists").arg(name));
+  } else {
+    SessionTab* s = new SessionTab(this, tabName);
+    tabs.insert(tabName, s);
+    tabWidget->addTab(s->getWebView(), QString("New Tab"));
 
-  connect(s,    SIGNAL(titleChanged(const QString&)),
-          this, SLOT(updateTabTitle(const QString&)));
+    connect(s,    SIGNAL(titleChanged(const QString&)),
+            this, SLOT(updateTabTitle(const QString&)));
 
-  return s;
+    return s;
+  }
 }
 
 void Session::destroyTab(const QString& tabName)
@@ -60,6 +65,8 @@ void Session::destroyTab(const QString& tabName)
     SessionTab* s = tabs[tabName];
     delete s;
     tabs.remove(tabName);
+  } else {
+    throw Exception(QString("Session tab with name '%1' does not exists").arg(name));
   }
 }
 
