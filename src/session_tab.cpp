@@ -46,7 +46,6 @@ SessionTab::SessionTab(Session* s, const QString& n)
 
 SessionTab::~SessionTab()
 {
-  qDebug() << "SessionTab::~SessionTab()";
 }
 
 void SessionTab::visit(const QString& url)
