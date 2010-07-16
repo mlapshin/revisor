@@ -7,6 +7,8 @@
 #include <QUrl>
 #include <QDebug>
 #include <QSignalMapper>
+#include <QProcess>
+#include <unistd.h>
 
 #define BUFFER_SIZE (1024 * 1024)
 #define TIMEOUT     (10 * 1000)
@@ -14,7 +16,8 @@
 HttpServer::HttpServer(const QString& host, quint16 port, Application* a, Dispatcher* d)
     : QTcpServer(a), dispatcher(d), app(a)
 {
-  qDebug() << "Revisor is listening" << host << "on port" << port;
+  // TODO: Cross-platform PID retrievement
+  qDebug() << "Revisor is listening" << host << "on port" << port << "PID" << getpid();
   listen(QHostAddress(host), port);
 }
 

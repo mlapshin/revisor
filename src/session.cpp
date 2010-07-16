@@ -45,8 +45,8 @@ Session::~Session()
 
 SessionTab* Session::createTab(const QString& tabName)
 {
-  if (tabs.contains(name)) {
-    throw Exception(QString("Session tab with name '%1' already exists").arg(name));
+  if (tabs.contains(tabName)) {
+    throw Exception(QString("Session tab with name '%1' already exists in session '%2'").arg(name).arg(name));
   } else {
     SessionTab* s = new SessionTab(this, tabName);
     tabs.insert(tabName, s);
@@ -66,7 +66,7 @@ void Session::destroyTab(const QString& tabName)
     delete s;
     tabs.remove(tabName);
   } else {
-    throw Exception(QString("Session tab with name '%1' does not exists").arg(name));
+    throw Exception(QString("Session tab with name '%1' does not exists in session '%2'").arg(tabName).arg(name));
   }
 }
 
