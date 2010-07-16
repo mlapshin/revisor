@@ -37,7 +37,7 @@ class WaitForLoadThread : public DeferredDispatcherResponseThread
     bool timedOut = !tab->waitForLoad(timeout);
     bool successfull = tab->isLoadSuccessfull();
 
-    response = JSON::response("OK", JSON::keyValue("timedOut", timedOut) + ", " + JSON::keyValue("elapsedTime", t.elapsed()) + ", " + JSON::keyValue("successfull", successfull));
+    response = JSON::response("OK", JSON::keyValue("timed_out", timedOut) + ", " + JSON::keyValue("elapsed_time", t.elapsed()) + ", " + JSON::keyValue("successfull", successfull));
   }
 
  private:
@@ -57,7 +57,7 @@ class WaitForAllRequestsFinishedThread : public DeferredDispatcherResponseThread
     t.start();
     tab->waitForAllRequestsFinished(waitBefore, waitAfter, timeout);
 
-    response = JSON::response("OK", JSON::keyValue("elapsedTime", t.elapsed()));
+    response = JSON::response("OK", JSON::keyValue("elapsed_time", t.elapsed()));
   }
 
  private:
@@ -133,7 +133,7 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     ARG_FROM_COMMAND(QString, script, "script", String, "");
 
     QVariant res = tab->evaluateScript(script);
-    response.response = JSON::response("OK", JSON::keyValue("evalResult", res));
+    response.response = JSON::response("OK", JSON::keyValue("eval_result", res));
 
   } else if (commandName == "session.tab.set_confirm_answer") {
     assertParamPresent(command, "answer");
