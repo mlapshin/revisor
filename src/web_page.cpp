@@ -25,5 +25,5 @@ void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, c
 bool WebPage::javaScriptPrompt(QWebFrame* frame, const QString& msg, const QString& defaultValue, QString* result)
 {
   *result = promptAnswer;
-  return promptCancelled;
+  return !promptCancelled;
 }
