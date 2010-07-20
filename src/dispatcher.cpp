@@ -8,15 +8,30 @@
 #include "exception.hpp"
 #include "json.hpp"
 
-#define ARG_FROM_COMMAND(ctype, var, name, type, default) \
-  ctype var = default; \
-  if (command.property(name).isValid()) { \
-    if (!command.property(name).is ## type ()) { \
+#define ARG_FROM_COMMAND(ctype, var, name, type, default)            \
+  ctype var = default;                                               \
+  if (command.property(name).isValid()) {                            \
+    if (!command.property(name).is ## type ()) {                     \
       throw Exception("Parameter " name " should have type " #type); \
-    } else { \
-      var = command.property(name).to ## type (); \
-    } \
+    } else {                                                         \
+      var = command.property(name).to ## type ();                    \
+    }                                                                \
   }
+
+#define COOKIE_PARAM_WITH_CAST(name, pname, type, cast, required)       \
+  if (it.value().property(name).is ## type ()) {                        \
+    cookie.set ## pname (it.value().property(name).to ## type ().to ## cast ()); \
+  } else if (required) {                                                    \
+    throw Exception("Cookie parameter " name " is required");           \
+  }
+
+#define COOKIE_PARAM(name, pname, type, required)                 \
+  if (it.value().property(name).is ## type ()) {                        \
+    cookie.set ## pname (it.value().property(name).to ## type ()); \
+  } else if (required) {                                                    \
+    throw Exception("Cookie parameter " name " is required");           \
+  }
+
 
 DeferredDispatcherResponseThread::DeferredDispatcherResponseThread(Dispatcher* d)
     : QThread(d), dispatcher(d)
@@ -83,6 +98,38 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
     app->startSession(sessionName);
   } else if (commandName == "session.stop") {
     app->stopSession(sessionName);
+  } else if (commandName == "session.set_cookies") {
+    QList<QNetworkCookie> cookies;
+    assertParamPresent(command, "default_url");
+    ARG_FROM_COMMAND(QString, url, "default_url", String, "");
+
+    if (command.property("cookies").isArray()) {
+      QScriptValueIterator it(command.property("cookies"));
+
+      while(it.hasNext()) {
+        it.next();
+        QNetworkCookie cookie;
+
+        // TODO: rewrite me in more generalized way
+        COOKIE_PARAM_WITH_CAST("name", Name, String, Utf8, true);
+        COOKIE_PARAM_WITH_CAST("value", Value, String, Utf8, true);
+        COOKIE_PARAM_WITH_CAST("path", Path, String, Utf8, false);
+        COOKIE_PARAM_WITH_CAST("domain", Domain, String, Utf8, false);
+        COOKIE_PARAM("http_only", HttpOnly, Bool, false);
+        COOKIE_PARAM("secure", Secure, Bool, false);
+
+        if (it.value().property("expires_at").isDate()) {
+          cookie.setExpirationDate(it.value().property("expires_at").toDateTime());
+        }
+
+        cookies.append(cookie);
+      }
+    } else {
+      throw Exception("Argument 'cookies' of command 'session.set_cookies' must be an array");
+    }
+
+    app->getSession(sessionName)->setCookies(cookies, url);
+    qDebug() << app->getSession(sessionName)->getCookies();
   }
 
   return response;

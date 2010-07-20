@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QMap>
 #include <QWidget>
+#include <QList>
+#include <QNetworkCookie>
+#include <QUrl>
 
 class QNetworkCookieJar;
 class Application;
@@ -57,6 +60,9 @@ class Session : public QObject
   }
 
   SessionTab* getTab(const QString& tabName) const;
+
+  void setCookies(const QList<QNetworkCookie>& cookies, const QUrl& from);
+  const QList<QNetworkCookie>& getCookies() const;
 
  private slots:
   void updateTabTitle(const QString& newTabTitle);

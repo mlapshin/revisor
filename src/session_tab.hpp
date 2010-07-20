@@ -15,6 +15,7 @@ class QNetworkReply;
 class SessionTab : public QObject
 {
   Q_OBJECT;
+
  public:
   SessionTab(Session* s, const QString& name);
   ~SessionTab();
