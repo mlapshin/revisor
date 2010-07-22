@@ -82,6 +82,30 @@ class WaitForAllRequestsFinishedThread : public DeferredDispatcherResponseThread
   unsigned int waitAfter;
 };
 
+class WaitForTrueEvaluationThread : public DeferredDispatcherResponseThread
+{
+ public:
+  WaitForTrueEvaluationThread(Dispatcher* d, SessionTab* t, const QString& evalScript, unsigned int retryInterval, unsigned int triesCount)
+      : DeferredDispatcherResponseThread(d), tab(t), script(evalScript), interval(retryInterval), tries(triesCount) {}
+
+  void run()
+  {
+    QTime t;
+    t.start();
+    bool evalResult = tab->waitForTrueEvaluation(script, interval, tries);
+
+    response = JSON::response("OK", JSON::keyValue("elapsed_time", t.elapsed()) +
+                              ", " + JSON::keyValue("eval_result", evalResult));
+  }
+
+ private:
+  SessionTab* tab;
+  QString script;
+  unsigned int interval;
+  unsigned int tries;
+};
+
+
 Dispatcher::Dispatcher(Application* a)
     : QObject(a)
 {
@@ -178,6 +202,16 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     ARG_FROM_COMMAND(unsigned int, waitAfter, "waitAfter", Number, 0);
 
     WaitForAllRequestsFinishedThread* t = new WaitForAllRequestsFinishedThread(this, tab, timeout, waitBefore, waitAfter);
+    t->start();
+    response.deferredThread = t;
+
+  } else if (commandName == "session.tab.wait_for_true_evaluation") {
+    assertParamPresent(command, "script");
+    ARG_FROM_COMMAND(unsigned int, interval, "interval", Number, 500);
+    ARG_FROM_COMMAND(unsigned int, triesCount, "tries_count", Number, 3);
+    ARG_FROM_COMMAND(QString, script, "script", String, "");
+
+    WaitForTrueEvaluationThread* t = new WaitForTrueEvaluationThread(this, tab, script, interval, triesCount);
     t->start();
     response.deferredThread = t;
 

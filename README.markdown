@@ -90,6 +90,17 @@ Executes JavaScript in tab context and returns value of last statement.
 * `tab_name` - tab name
 * `script` - script source to execute
 
+### session.tab.wait\_for\_successfull\_evaluation ###
+
+Executes JavaScript several times in cycle and breaks cycle when return value is true.
+If it never happens, stops after `tries_count` tries.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `script` - script to execute
+* `tries_count` - maximum number of tries
+* `interval` - interval between tries
+
 ### session.tab.set\_confirm\_answer ###
 Sets answer for JavaScript confirm() function.
 

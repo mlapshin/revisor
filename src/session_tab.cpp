@@ -142,3 +142,22 @@ void SessionTab::waitForAllRequestsFinished(unsigned int waitBefore, unsigned in
     }
   }
 }
+
+bool SessionTab::waitForTrueEvaluation(const QString& script, unsigned int retryInterval, unsigned int tries)
+{
+  bool successfull = false;
+  unsigned int currentTry = 0;
+
+  while(!successfull && currentTry < tries) {
+    QVariant result = evaluateScript(script);
+
+    if (result.isValid() && result.type() == QVariant::Bool && result.toBool() == true) {
+      successfull = true;
+    }
+
+    SleepyThread::msleep(retryInterval);
+    currentTry++;
+  }
+
+  return successfull;
+}
