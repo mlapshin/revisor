@@ -86,12 +86,12 @@ SessionTab* Session::getTab(const QString& tabName) const
   }
 }
 
-void Session::setCookies(const QList<QNetworkCookie>& cookies, const QUrl& from)
+void Session::setCookiesFor(const QList<QNetworkCookie>& cookies, const QUrl& from)
 {
   cookieJar->setCookiesFromUrl(cookies, from);
 }
 
-const QList<QNetworkCookie>& Session::getCookies() const
+QList<QNetworkCookie> Session::getCookiesFor(const QUrl& url) const
 {
-  return cookieJar->cookiesForUrl(QUrl("http://www.example.com"));
+  return cookieJar->cookiesForUrl(url);
 }

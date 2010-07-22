@@ -61,8 +61,8 @@ class Session : public QObject
 
   SessionTab* getTab(const QString& tabName) const;
 
-  void setCookies(const QList<QNetworkCookie>& cookies, const QUrl& from);
-  const QList<QNetworkCookie>& getCookies() const;
+  void setCookiesFor(const QList<QNetworkCookie>& cookies, const QUrl& forUrl);
+  QList<QNetworkCookie> getCookiesFor(const QUrl& forUrl) const;
 
  private slots:
   void updateTabTitle(const QString& newTabTitle);

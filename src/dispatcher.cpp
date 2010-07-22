@@ -21,14 +21,14 @@
 #define COOKIE_PARAM_WITH_CAST(name, pname, type, cast, required)       \
   if (it.value().property(name).is ## type ()) {                        \
     cookie.set ## pname (it.value().property(name).to ## type ().to ## cast ()); \
-  } else if (required) {                                                    \
+  } else if (required) {                                                \
     throw Exception("Cookie parameter " name " is required");           \
   }
 
-#define COOKIE_PARAM(name, pname, type, required)                 \
+#define COOKIE_PARAM(name, pname, type, required)                       \
   if (it.value().property(name).is ## type ()) {                        \
-    cookie.set ## pname (it.value().property(name).to ## type ()); \
-  } else if (required) {                                                    \
+    cookie.set ## pname (it.value().property(name).to ## type ());      \
+  } else if (required) {                                                \
     throw Exception("Cookie parameter " name " is required");           \
   }
 
@@ -100,8 +100,8 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
     app->stopSession(sessionName);
   } else if (commandName == "session.set_cookies") {
     QList<QNetworkCookie> cookies;
-    assertParamPresent(command, "default_url");
-    ARG_FROM_COMMAND(QString, url, "default_url", String, "");
+    assertParamPresent(command, "url");
+    ARG_FROM_COMMAND(QString, url, "url", String, "");
 
     if (command.property("cookies").isArray()) {
       QScriptValueIterator it(command.property("cookies"));
@@ -117,9 +117,10 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
         COOKIE_PARAM_WITH_CAST("domain", Domain, String, Utf8, false);
         COOKIE_PARAM("http_only", HttpOnly, Bool, false);
         COOKIE_PARAM("secure", Secure, Bool, false);
-
-        if (it.value().property("expires_at").isDate()) {
-          cookie.setExpirationDate(it.value().property("expires_at").toDateTime());
+        if (it.value().property("expires_at").isValid()) {
+          QDateTime expiresAt = QDateTime::fromString(it.value().property("expires_at").toString(), Qt::ISODate);
+          expiresAt.setTimeSpec(Qt::UTC);
+          cookie.setExpirationDate(expiresAt);
         }
 
         cookies.append(cookie);
@@ -128,8 +129,13 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
       throw Exception("Argument 'cookies' of command 'session.set_cookies' must be an array");
     }
 
-    app->getSession(sessionName)->setCookies(cookies, url);
-    qDebug() << app->getSession(sessionName)->getCookies();
+    app->getSession(sessionName)->setCookiesFor(cookies, url);
+  } else if (commandName == "session.get_cookies") {
+    assertParamPresent(command, "url");
+    ARG_FROM_COMMAND(QString, url, "url", String, "");
+
+    QList<QNetworkCookie> cookies = app->getSession(sessionName)->getCookiesFor(url);
+    response.response = JSON::response("OK", JSON::keyValue("cookies", cookies));
   }
 
   return response;

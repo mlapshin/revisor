@@ -1,4 +1,5 @@
 #include "json.hpp"
+#include <QStringList>
 
 QString JSON::toJSON(bool value)
 {
@@ -28,6 +29,11 @@ QString JSON::toJSON(qlonglong value)
 QString JSON::toJSON(double f)
 {
   return QString("%1").arg(f);
+}
+
+QString JSON::toJSON(const QDateTime& d)
+{
+  return toJSON(d.toString(Qt::ISODate));
 }
 
 QString JSON::toJSON(const QString& value)
@@ -60,4 +66,24 @@ QString JSON::toJSON(const QVariant& v)
 QString JSON::response(const QString& code, const QString& additional)
 {
   return QString("{ \"result\": \"%1\" %2 }").arg(code).arg(additional.isEmpty() ? "" : ", " + additional);
+}
+
+QString JSON::toJSON(const QList<QNetworkCookie>& cookies)
+{
+  QStringList components;
+
+  for(QList<QNetworkCookie>::const_iterator it = cookies.begin(); it != cookies.end(); it++) {
+    QString c;
+    c += keyValue("name", QString((*it).name()));
+    c += ", " + keyValue("value", QString((*it).value()));
+    c += ", " + keyValue("domain", (*it).domain());
+    c += ", " + keyValue("path", (*it).path());
+    c += ", " + keyValue("http_only", (*it).isHttpOnly());
+    c += ", " + keyValue("secure", (*it).isSecure());
+    c += ", " + keyValue("expires_at", (*it).expirationDate());
+
+    components << QString("{ %1 }").arg(c);
+  }
+
+  return QString("[ %1 ]").arg(components.join(", "));
 }

@@ -3,6 +3,9 @@
 
 #include <QString>
 #include <QVariant>
+#include <QList>
+#include <QNetworkCookie>
+#include <QDateTime>
 
 class JSON
 {
@@ -21,9 +24,12 @@ class JSON
   static QString toJSON(qlonglong value);
   static QString toJSON(unsigned int value);
   static QString toJSON(qulonglong value);
+  static QString toJSON(const QDateTime& value);
+
 
   static QString toJSON(const QVariant& v);
   static QString toJSON(const QString& value);
+  static QString toJSON(const QList<QNetworkCookie>& cookies);
 };
 
 #endif /* _JSON_H_ */
