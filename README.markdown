@@ -24,6 +24,8 @@ Why Revisor is better?
 
 Or "Why Selenium sucks?" Because:
 
+* No Java Required
+* No fight with [same origin policy](http://seleniumhq.org/docs/05_selenium_rc.html#the-same-origin-policy).
 * It's lightweight and easy to use. You don't need to run Big Firefox
   with all it's unnecessary GUI and plugins.
 * It allows to have completely separate "sessions" within one Revisor
