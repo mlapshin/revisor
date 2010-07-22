@@ -121,4 +121,4 @@ Update cookies information or add new ones.
 Retrieve list of actual cookies for specified URL.
 
 * `session_name` - session name
-* `url` - if `domain` or `path` attributes of cookie are not set, they will be extracted from this URL
+* `url` - URL to get cookies for.
