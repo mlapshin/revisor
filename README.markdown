@@ -107,7 +107,7 @@ Sets answer for JavaScript prompt() function.
 Update cookies information or add new ones.
 
 * `session_name` - session name
-* `default_url` - if `domain` or `path` attributes of cookie are not set, they will be extracted from this URL
+* `url` - if `domain` or `path` attributes of cookie are not set, they will be extracted from this URL
 * `cookies` - array of objects containing information for cookies. Those objects has following keys:
   * `name` - name of the cookie
   * `value` - value of the cookie
@@ -116,3 +116,9 @@ Update cookies information or add new ones.
   * `expires_at` - when cookie expires
   * `http_only` - "HTTP ONLY" flag (?)
   * `secure` - can this cookie be transfered through unencrypted connections
+
+### session.tab.get\_cookies ###
+Retrieve list of actual cookies for specified URL.
+
+* `session_name` - session name
+* `url` - if `domain` or `path` attributes of cookie are not set, they will be extracted from this URL
