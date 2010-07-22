@@ -44,8 +44,6 @@ void HttpServer::handleCommand(const QStringMap& params, QTcpSocket* socket)
 
 void HttpServer::deferredResponseReady()
 {
-  qDebug() << "Sending deferred response";
-
   DeferredDispatcherResponseThread* thread = qobject_cast<DeferredDispatcherResponseThread*>(sender());
   QTcpSocket* socket = deferredSocketsMap[thread];
 
