@@ -18,6 +18,8 @@ class WebPage : public QWebPage
     promptCancelled = cancelled;
   }
 
+  void saveScreenshot(const QString& fileName, const QSize& viewportSize);
+
  protected:
   // virtual bool acceptNavigationRequest  ( QWebFrame * frame, const QNetworkRequest & request, NavigationType type );
   // virtual QString chooseFile ( QWebFrame * parentFrame, const QString & suggestedFile );

@@ -116,7 +116,16 @@ Sets answer for JavaScript prompt() function.
 * `answer` - string answer
 * `cancelled` - boolean value indicates if 'Cancel' button was pressed
 
-### session.tab.set\_cookies ###
+### session.tab.save\_screenshot ###
+Saves screenshot of current page to image file.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `file_name` - file to render page to
+* `viewport_width` - width of resulting image
+* `viewport_height` - height of resulting image
+
+### session.set\_cookies ###
 Update cookies information or add new ones.
 
 * `session_name` - session name
@@ -130,7 +139,7 @@ Update cookies information or add new ones.
   * `http_only` - "HTTP ONLY" flag (?)
   * `secure` - can this cookie be transfered through unencrypted connections
 
-### session.tab.get\_cookies ###
+### session.get\_cookies ###
 Retrieve list of actual cookies for specified URL.
 
 * `session_name` - session name

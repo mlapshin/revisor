@@ -115,7 +115,7 @@ void SessionTab::_updateTabTitle()
   }
 
   title += QString(" [%1]").arg(name);
-  titleChanged(title);
+  emit titleChanged(title);
 }
 
 void SessionTab::singleRequestFinished(QNetworkReply* reply)
@@ -160,4 +160,9 @@ bool SessionTab::waitForTrueEvaluation(const QString& script, unsigned int retry
   }
 
   return successfull;
+}
+
+void SessionTab::saveScreenshot(const QString& fileName, const QSize& viewportSize)
+{
+  webPage->saveScreenshot(fileName, viewportSize);
 }

@@ -234,7 +234,15 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     ARG_FROM_COMMAND(QString, answer, "answer", String, "");
 
     tab->setPromptAnswer(answer, cancelled);
+  } else if (commandName == "session.tab.save_screenshot") {
+    assertParamPresent(command, "file_name");
+    ARG_FROM_COMMAND(QString, fileName, "file_name", String, "");
+    ARG_FROM_COMMAND(unsigned int, vpWidth, "viewport_width", Number, 0);
+    ARG_FROM_COMMAND(unsigned int, vpHeight, "viewport_height", Number, 0);
+
+    tab->saveScreenshot(fileName, QSize(vpWidth, vpHeight));
   }
+
 
   return response;
 }
