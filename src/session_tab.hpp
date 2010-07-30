@@ -50,6 +50,7 @@ class SessionTab : public QObject
   void updateTitle(const QString& t);
   void updateProgress(int p);
   void loadFinished(bool s);
+  void loadStarted();
   void singleRequestFinished(QNetworkReply* reply);
 
  signals:

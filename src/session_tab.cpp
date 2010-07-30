@@ -40,6 +40,10 @@ SessionTab::SessionTab(Session* s, const QString& n)
   connect(webView, SIGNAL(loadFinished(bool)),
           this,    SLOT(loadFinished(bool)));
 
+  connect(webView, SIGNAL(loadStarted()),
+          this,    SLOT(loadStarted()));
+
+
   connect(networkManager, SIGNAL(finished(QNetworkReply*)),
           this,           SLOT(singleRequestFinished(QNetworkReply*)));
 }
@@ -57,13 +61,21 @@ void SessionTab::visit(const QString& url)
 bool SessionTab::waitForLoad(unsigned int t)
 {
   unsigned long timeout = t;
+  bool result;
+
   if (t == 0) {
     timeout = ULONG_MAX;
   }
 
-  pageLoadedMutex.lock();
-  bool result = pageLoaded.wait(&pageLoadedMutex, timeout);
-  pageLoadedMutex.unlock();
+  if (loadProgress != 100) {
+    pageLoadedMutex.lock();
+    qDebug() << "Wait for load";
+    result = pageLoaded.wait(&pageLoadedMutex, timeout);
+    qDebug() << "LOADED";
+    pageLoadedMutex.unlock();
+  } else {
+    result = true;
+  }
 
   return result;
 }
@@ -93,6 +105,14 @@ void SessionTab::updateProgress(int p)
 {
   loadProgress = p;
   _updateTabTitle();
+}
+
+void SessionTab::loadStarted()
+{
+  successfullLoad = false;
+  loadProgress = 0;
+  _updateTabTitle();
+  qDebug() << "Load started";
 }
 
 void SessionTab::loadFinished(bool success)
