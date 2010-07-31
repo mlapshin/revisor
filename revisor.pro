@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET   = revisor
-CONFIG  += release
+CONFIG  += debug # release
 QT      += webkit network script
 LIBS    += -largtable2
 

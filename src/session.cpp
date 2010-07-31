@@ -23,7 +23,7 @@ void SessionWindow::closeEvent(QCloseEvent* event)
 }
 
 Session::Session(Application* a, const QString& n)
-    : QObject(0)
+    : QObject(a)
 {
   app = a;
   name = n;
@@ -39,6 +39,11 @@ Session::Session(Application* a, const QString& n)
 
 Session::~Session()
 {
+  qDebug() << cookieJar->cookiesForUrl(QUrl("http://gmail.com/"));
+  for (SessionTabsMap::Iterator it = tabs.begin(); it != tabs.end(); it++) {
+    delete it.value();
+  }
+
   window->close();
   delete window;
 }

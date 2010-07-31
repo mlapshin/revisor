@@ -10,6 +10,7 @@
 class HttpServer;
 class Dispatcher;
 class Session;
+class QNetworkDiskCache;
 
 class Application : public QApplication
 {
@@ -31,6 +32,10 @@ class Application : public QApplication
     return &scriptEngine;
   }
 
+  QNetworkDiskCache* getHttpCache() const {
+    return httpCache;
+  }
+
   int start();
 
  private:
@@ -45,6 +50,7 @@ class Application : public QApplication
   Dispatcher* dispatcher;
   SessionsMap sessions;
   QScriptEngine scriptEngine;
+  QNetworkDiskCache* httpCache;
 };
 
 #endif /* _APPLICATION_H_ */

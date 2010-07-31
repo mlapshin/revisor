@@ -4,6 +4,7 @@
 #include "session.hpp"
 #include <QDebug>
 #include "exception.hpp"
+#include <QNetworkDiskCache>
 
 Application::Application(int _argc, char** _argv)
     : QApplication(_argc, _argv)
@@ -20,6 +21,10 @@ int Application::start()
   if (initArgtable()) {
     dispatcher = new Dispatcher(this);
     httpServer = new HttpServer(listeningInterface, portNumber, this, dispatcher);
+
+    httpCache = new QNetworkDiskCache(this);
+    httpCache->setCacheDirectory("/tmp/revisor_cache");
+
     return exec();
   } else {
     return 0;
@@ -67,6 +72,9 @@ Application::~Application()
   for(SessionsMap::iterator i = sessions.begin(); i != sessions.end(); i++) {
     delete *i;
   }
+
+  delete httpCache;
+  httpCache = 0;
 
   sessions.clear();
 }

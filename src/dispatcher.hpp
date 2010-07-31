@@ -7,6 +7,7 @@
 
 class HttpServer;
 class Dispatcher;
+class SessionTab;
 
 class DeferredDispatcherResponseThread : public QThread
 {
@@ -58,6 +59,8 @@ class Dispatcher: public QObject
 
   DispatcherResponse handleSessionCommand(const QString& commandName, const QScriptValue& cmd);
   DispatcherResponse handleSessionTabCommand(const QString& commandName, const QScriptValue& cmd);
+  DispatcherResponse handleSessionTabSendMouseEventCommand(SessionTab* t, const QScriptValue& cmd);
+
 
   Application* app;
 };

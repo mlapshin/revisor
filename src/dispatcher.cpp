@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QScriptValueIterator>
 #include <QTime>
+#include <QMouseEvent>
 #include "exception.hpp"
 #include "json.hpp"
 
@@ -17,6 +18,8 @@
       var = command.property(name).to ## type ();                    \
     }                                                                \
   }
+
+#define STRING_TO_ENUM(svar, evar, s, e) if (svar == s) { evar = e; }
 
 #define COOKIE_PARAM_WITH_CAST(name, pname, type, cast, required)       \
   if (it.value().property(name).is ## type ()) {                        \
@@ -165,6 +168,107 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
   return response;
 }
 
+Qt::MouseButton stringToMouseButton(const QString& button)
+{
+  Qt::MouseButton realButton = Qt::NoButton;
+
+  STRING_TO_ENUM(button, realButton, "", Qt::NoButton);
+  STRING_TO_ENUM(button, realButton, "left", Qt::LeftButton);
+  STRING_TO_ENUM(button, realButton, "right", Qt::RightButton);
+  STRING_TO_ENUM(button, realButton, "mid", Qt::MidButton);
+  STRING_TO_ENUM(button, realButton, "xbutton1", Qt::XButton1);
+  STRING_TO_ENUM(button, realButton, "xbutton2", Qt::XButton2);
+
+  return realButton;
+}
+
+Qt::KeyboardModifier stringToModifier(const QString& modifier)
+{
+  Qt::KeyboardModifier ret = Qt::NoModifier;
+
+  STRING_TO_ENUM(modifier, ret, "", Qt::NoModifier);
+  STRING_TO_ENUM(modifier, ret, "shift", Qt::ShiftModifier);
+  STRING_TO_ENUM(modifier, ret, "control", Qt::ControlModifier);
+  STRING_TO_ENUM(modifier, ret, "alt", Qt::AltModifier);
+  STRING_TO_ENUM(modifier, ret, "meta", Qt::MetaModifier);
+  STRING_TO_ENUM(modifier, ret, "keypad", Qt::KeypadModifier);
+  STRING_TO_ENUM(modifier, ret, "group_switch", Qt::GroupSwitchModifier);
+
+  return ret;
+}
+
+DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab* tab, const QScriptValue& command)
+{
+  DispatcherResponse response;
+  QMouseEvent::Type realType;
+  Qt::MouseButton realButton;
+  Qt::MouseButtons realButtons;
+  Qt::KeyboardModifiers realModifiers;
+
+  assertParamPresent(command, "x");
+  assertParamPresent(command, "y");
+  ARG_FROM_COMMAND(unsigned int, x, "x", Number, 0);
+  ARG_FROM_COMMAND(unsigned int, y, "y", Number, 0);
+
+  ARG_FROM_COMMAND(QString, type, "type", String, "move");
+  STRING_TO_ENUM(type, realType, "click", QEvent::MouseButtonPress);
+  STRING_TO_ENUM(type, realType, "button_press", QEvent::MouseButtonPress);
+  STRING_TO_ENUM(type, realType, "button_release", QEvent::MouseButtonRelease);
+  STRING_TO_ENUM(type, realType, "dblclick", QEvent::MouseButtonDblClick);
+  STRING_TO_ENUM(type, realType, "move", QEvent::MouseMove);
+
+  ARG_FROM_COMMAND(QString, button, "button", String, "");
+  realButton = stringToMouseButton(button);
+
+  if ((realType == QEvent::MouseButtonPress ||
+       realType == QEvent::MouseButtonRelease ||
+       realType == QEvent::MouseButtonDblClick) &&
+      realButton == Qt::NoButton) {
+    throw Exception(QString("You should specify button for this type of mouse event"));
+  }
+
+  QScriptValue buttonsProperty = command.property("buttons");
+
+  if (buttonsProperty.isArray()) {
+    int arrayLength = buttonsProperty.property("length").toInt32();
+
+    for (int i = 0; i < arrayLength; i++) {
+      QScriptValue v = buttonsProperty.property(i);
+
+      if (v.isString()) {
+        realButtons |= stringToMouseButton(v.toString());
+      }
+    }
+  }
+
+  QScriptValue modifiersProperty = command.property("modifiers");
+
+  if (modifiersProperty.isArray()) {
+    int arrayLength = modifiersProperty.property("length").toInt32();
+
+    for (int i = 0; i < arrayLength; i++) {
+      QScriptValue v = modifiersProperty.property(i);
+
+      if (v.isString()) {
+        realModifiers |= stringToModifier(v.toString());
+      }
+    }
+  }
+
+  QMouseEvent event(realType, QPoint(x, y), realButton, realButtons, realModifiers);
+
+  if (type == "click") {
+    tab->sendEvent(&event);
+
+    QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(x, y), realButton, realButtons, realModifiers);
+    tab->sendEvent(&releaseEvent);
+  } else {
+    tab->sendEvent(&event);
+  }
+
+  return response;
+}
+
 DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandName, const QScriptValue& command)
 {
   assertParamPresent(command, "session_name");
@@ -234,6 +338,7 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     ARG_FROM_COMMAND(QString, answer, "answer", String, "");
 
     tab->setPromptAnswer(answer, cancelled);
+
   } else if (commandName == "session.tab.save_screenshot") {
     assertParamPresent(command, "file_name");
     ARG_FROM_COMMAND(QString, fileName, "file_name", String, "");
@@ -241,8 +346,9 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
     ARG_FROM_COMMAND(unsigned int, vpHeight, "viewport_height", Number, 0);
 
     tab->saveScreenshot(fileName, QSize(vpWidth, vpHeight));
+  } else if (commandName == "session.tab.send_mouse_event") {
+    return handleSessionTabSendMouseEventCommand(tab, command);
   }
-
 
   return response;
 }

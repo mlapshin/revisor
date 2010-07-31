@@ -18,7 +18,7 @@ class SessionTab : public QObject
 
  public:
   SessionTab(Session* s, const QString& name);
-  ~SessionTab();
+  virtual ~SessionTab();
 
   inline CountingNetworkAccessManager* getNetworkAccessManager() const {
     return networkManager;
@@ -36,6 +36,10 @@ class SessionTab : public QObject
     return successfullLoad;
   }
 
+  inline Session* getSession() const {
+    return session;
+  }
+
   void setConfirmAnswer(bool a);
   void setPromptAnswer(const QString& a, bool canceled);
 
@@ -45,6 +49,7 @@ class SessionTab : public QObject
   bool waitForTrueEvaluation(const QString& script, unsigned int retryInterval, unsigned int tries);
   QVariant evaluateScript(const QString& script);
   void saveScreenshot(const QString& fileName, const QSize& viewportSize);
+  bool sendEvent(QEvent* e);
 
  public slots:
   void updateTitle(const QString& t);

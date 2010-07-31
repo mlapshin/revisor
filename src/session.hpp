@@ -34,7 +34,7 @@ class Session : public QObject
 
  public:
   Session(Application* a, const QString& name);
-  ~Session();
+  virtual ~Session();
 
   inline QNetworkCookieJar* getNetworkCookieJar() const {
     return cookieJar;
@@ -50,6 +50,10 @@ class Session : public QObject
 
   inline const QString& getName() const {
     return name;
+  }
+
+  inline Application* getApplication() const {
+    return app;
   }
 
   SessionTab* createTab(const QString& tabName);

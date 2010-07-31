@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QWebFrame>
 #include <QThread>
+#include "application.hpp"
+#include <QMouseEvent>
 
 class SleepyThread : public QThread
 {
@@ -50,6 +52,8 @@ SessionTab::SessionTab(Session* s, const QString& n)
 
 SessionTab::~SessionTab()
 {
+  delete webView;
+  delete webPage;
 }
 
 void SessionTab::visit(const QString& url)
@@ -185,4 +189,15 @@ bool SessionTab::waitForTrueEvaluation(const QString& script, unsigned int retry
 void SessionTab::saveScreenshot(const QString& fileName, const QSize& viewportSize)
 {
   webPage->saveScreenshot(fileName, viewportSize);
+}
+
+bool SessionTab::sendEvent(QEvent* e)
+{
+  QMouseEvent* me = static_cast<QMouseEvent*>(e);
+
+  qDebug() << me->pos() << me->type() << me->button();
+
+  webView->setEnabled(true);
+  session->getApplication()->sendEvent(webView, e);
+  webView->setEnabled(false);
 }

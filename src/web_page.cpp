@@ -7,7 +7,6 @@
 WebPage::WebPage(QObject* p)
     : QWebPage(p)
 {
-
 }
 
 void WebPage::javaScriptAlert(QWebFrame* frame, const QString& msg)
