@@ -39,7 +39,6 @@ Session::Session(Application* a, const QString& n)
 
 Session::~Session()
 {
-  qDebug() << cookieJar->cookiesForUrl(QUrl("http://gmail.com/"));
   for (SessionTabsMap::Iterator it = tabs.begin(); it != tabs.end(); it++) {
     delete it.value();
   }

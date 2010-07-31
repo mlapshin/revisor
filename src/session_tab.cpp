@@ -174,6 +174,7 @@ bool SessionTab::waitForTrueEvaluation(const QString& script, unsigned int retry
 
   while(!successfull && currentTry < tries) {
     QVariant result = evaluateScript(script);
+    qDebug() << "Wait for eval result: " << result;
 
     if (result.isValid() && result.type() == QVariant::Bool && result.toBool() == true) {
       successfull = true;
