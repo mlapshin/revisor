@@ -45,8 +45,6 @@ class SessionTab : public QObject
 
   void visit(const QString& url);
   bool waitForLoad(unsigned int timeout = 0);
-  void waitForAllRequestsFinished(unsigned int waitBefore = 0, unsigned int waitAfter = 0, unsigned int waitTimeout = 0);
-  bool waitForTrueEvaluation(const QString& script, unsigned int retryInterval, unsigned int tries);
   QVariant evaluateScript(const QString& script);
   void saveScreenshot(const QString& fileName, const QSize& viewportSize);
   bool sendEvent(QEvent* e);

@@ -149,44 +149,6 @@ void SessionTab::singleRequestFinished(QNetworkReply* reply)
   }
 }
 
-void SessionTab::waitForAllRequestsFinished(unsigned int waitBefore, unsigned int waitAfter, unsigned int waitTimeout)
-{
-  bool finished = false;
-  unsigned long timeout = waitTimeout == 0 ? ULONG_MAX : waitTimeout;
-
-  SleepyThread::msleep(waitBefore);
-  while (!finished) {
-    requestsFinishedMutex.lock();
-    requestsFinished.wait(&requestsFinishedMutex, timeout);
-    requestsFinishedMutex.unlock();
-    SleepyThread::msleep(waitAfter);
-
-    if (networkManager->getRequestsCount() == 0) {
-      finished = true;
-    }
-  }
-}
-
-bool SessionTab::waitForTrueEvaluation(const QString& script, unsigned int retryInterval, unsigned int tries)
-{
-  bool successfull = false;
-  unsigned int currentTry = 0;
-
-  while(!successfull && currentTry < tries) {
-    QVariant result = evaluateScript(script);
-    qDebug() << "Wait for eval result: " << result;
-
-    if (result.isValid() && result.type() == QVariant::Bool && result.toBool() == true) {
-      successfull = true;
-    }
-
-    SleepyThread::msleep(retryInterval);
-    currentTry++;
-  }
-
-  return successfull;
-}
-
 void SessionTab::saveScreenshot(const QString& fileName, const QSize& viewportSize)
 {
   webPage->saveScreenshot(fileName, viewportSize);

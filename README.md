@@ -90,17 +90,6 @@ Executes JavaScript in tab context and returns value of last statement.
 * `tab_name` - tab name
 * `script` - script source to execute
 
-### session.tab.wait\_for\_successfull\_evaluation ###
-
-Executes JavaScript several times in cycle and breaks cycle when return value is true.
-If it never happens, stops after `tries_count` tries.
-
-* `session_name` - session name
-* `tab_name` - tab name
-* `script` - script to execute
-* `tries_count` - maximum number of tries
-* `interval` - interval between tries
-
 ### session.tab.set\_confirm\_answer ###
 Sets answer for JavaScript confirm() function.
 
@@ -144,3 +133,15 @@ Retrieve list of actual cookies for specified URL.
 
 * `session_name` - session name
 * `url` - URL to get cookies for.
+
+### session.tab.send_mouse_event ###
+Sends mouse event to web page.
+
+* `session_name` - session name
+* `tab_name` - tab name
+* `type` - type of event: ['click', 'button_press', 'button_release', 'dblclick', 'move']
+* `x` - event x coordinate, relative to page
+* `y` - event y coordinate, relative to page
+* `button` - button for `click`, `button_press`, `button_release` or `dblclick` events, one of ['left', 'right', 'mid', 'xbutton1', 'xbutton2']
+* `buttons` - array of buttons for `move` event
+* `modifiers` - array of keyboard modifiers: ['shift', 'control', 'alt', 'meta', 'keypad', 'group_switch']
