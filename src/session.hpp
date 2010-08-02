@@ -64,6 +64,8 @@ class Session : public QObject
   }
 
   SessionTab* getTab(const QString& tabName) const;
+  void raiseTab(const QString& name);
+  void raiseTab(SessionTab* tab);
 
   void setCookiesFor(const QList<QNetworkCookie>& cookies, const QUrl& forUrl);
   QList<QNetworkCookie> getCookiesFor(const QUrl& forUrl) const;
@@ -72,6 +74,8 @@ class Session : public QObject
   void updateTabTitle(const QString& newTabTitle);
 
  private:
+  int getTabIndex(const QString& tabName);
+
   QNetworkCookieJar* cookieJar;
   Application* app;
   SessionWindow* window;

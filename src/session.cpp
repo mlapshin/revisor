@@ -99,3 +99,25 @@ QList<QNetworkCookie> Session::getCookiesFor(const QUrl& url) const
 {
   return cookieJar->cookiesForUrl(url);
 }
+
+void Session::raiseTab(const QString& tabName)
+{
+  if (tabs.contains(tabName)) {
+    window->raise();
+    tabWidget->setCurrentIndex(getTabIndex(tabName));
+  }
+}
+
+void Session::raiseTab(SessionTab* t)
+{
+  raiseTab(t->getName());
+}
+
+int Session::getTabIndex(const QString& tabName)
+{
+  if (tabs.contains(tabName)) {
+    return tabWidget->indexOf(tabs[tabName]->getWebView());
+  } else {
+    return -1;
+  }
+}
