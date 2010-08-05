@@ -158,9 +158,34 @@ bool SessionTab::sendEvent(QEvent* e)
 {
   QMouseEvent* me = static_cast<QMouseEvent*>(e);
 
-  qDebug() << me->pos() << me->type() << me->button();
-
   webView->setEnabled(true);
-  session->getApplication()->sendEvent(webView, e);
+  bool ret = session->getApplication()->sendEvent(webView, e);
   webView->setEnabled(false);
+
+  return ret;
+}
+
+bool SessionTab::sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+  QPoint relativePoint;
+  unsigned int scrollX = 0;
+  unsigned int scrollY = 0;
+
+  unsigned int w = webView->size().width();
+  unsigned int h = webView->size().height();
+
+  if (point.x() > w) {
+    scrollX = (w * (point.x() / w));
+    relativePoint.setX(point.x() % w);
+  }
+
+  if (point.y() > h) {
+    scrollY = (h * (point.y() / h));
+    relativePoint.setY(point.y() % h);
+  }
+
+  webView->scroll(scrollX, scrollY);
+
+  QMouseEvent event(type, relativePoint, button, buttons, modifiers);
+  return sendEvent(&event);
 }

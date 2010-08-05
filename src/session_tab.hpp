@@ -5,6 +5,7 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include <QVariant>
+#include <QMouseEvent>
 
 class Session;
 class CountingNetworkAccessManager;
@@ -48,6 +49,7 @@ class SessionTab : public QObject
   QVariant evaluateScript(const QString& script);
   void saveScreenshot(const QString& fileName, const QSize& viewportSize);
   bool sendEvent(QEvent* e);
+  bool sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 
  public slots:
   void updateTitle(const QString& t);

@@ -91,7 +91,6 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
         it.next();
         QNetworkCookie cookie;
 
-        // TODO: rewrite me in more generalized way
         COOKIE_PARAM_WITH_CAST("name", Name, String, Utf8, true);
         COOKIE_PARAM_WITH_CAST("value", Value, String, Utf8, true);
         COOKIE_PARAM_WITH_CAST("path", Path, String, Utf8, false);
@@ -182,7 +181,6 @@ DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab*
   }
 
   QScriptValue buttonsProperty = command.property("buttons");
-
   if (buttonsProperty.isArray()) {
     int arrayLength = buttonsProperty.property("length").toInt32();
 
@@ -196,7 +194,6 @@ DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab*
   }
 
   QScriptValue modifiersProperty = command.property("modifiers");
-
   if (modifiersProperty.isArray()) {
     int arrayLength = modifiersProperty.property("length").toInt32();
 
@@ -209,15 +206,11 @@ DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab*
     }
   }
 
-  QMouseEvent event(realType, QPoint(x, y), realButton, realButtons, realModifiers);
-
   if (type == "click") {
-    tab->sendEvent(&event);
-
-    QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(x, y), realButton, realButtons, realModifiers);
-    tab->sendEvent(&releaseEvent);
+    tab->sendMouseEvent(QEvent::MouseButtonPress, QPoint(x, y), realButton, realButtons, realModifiers);
+    tab->sendMouseEvent(QEvent::MouseButtonRelease, QPoint(x, y), realButton, realButtons, realModifiers);
   } else {
-    tab->sendEvent(&event);
+    tab->sendMouseEvent(realType, QPoint(x, y), realButton, realButtons, realModifiers);
   }
 
   return response;
