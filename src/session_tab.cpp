@@ -75,9 +75,10 @@ bool SessionTab::waitForLoad(unsigned int t)
     pageLoadedMutex.lock();
     qDebug() << "Wait for load";
     result = pageLoaded.wait(&pageLoadedMutex, timeout);
-    qDebug() << "LOADED";
+    qDebug() << "Page loaded";
     pageLoadedMutex.unlock();
   } else {
+    qDebug() << "Page already loaded";
     result = true;
   }
 
@@ -96,7 +97,9 @@ void SessionTab::setPromptAnswer(const QString& a, bool cancelled)
 
 QVariant SessionTab::evaluateScript(const QString& script)
 {
-  return webView->page()->mainFrame()->evaluateJavaScript(script);
+  QVariant ret = webView->page()->mainFrame()->evaluateJavaScript(script);
+  qDebug() << "Eval result: " << ret;
+  return ret;
 }
 
 void SessionTab::updateTitle(const QString& t)

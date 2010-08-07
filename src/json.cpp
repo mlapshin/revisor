@@ -1,5 +1,6 @@
 #include "json.hpp"
 #include <QStringList>
+#include <QDebug>
 
 QString JSON::toJSON(bool value)
 {
@@ -42,6 +43,22 @@ QString JSON::toJSON(const QString& value)
   return "\"" + s.replace("\"", "\\\"") + "\"";
 }
 
+QString JSON::toJSON(const QVariantList& l)
+{
+  QString ret = "[";
+
+  for (QVariantList::ConstIterator it = l.begin(); it != l.end(); it++) {
+    ret += toJSON(*it);
+
+    if ((it + 1) != l.end()) {
+      ret += ", ";
+    }
+  }
+
+  ret += "]";
+  return ret;
+}
+
 QString JSON::toJSON(const QVariant& v)
 {
   QVariant::Type t = v.type();
@@ -58,6 +75,8 @@ QString JSON::toJSON(const QVariant& v)
     return toJSON(v.toDouble());
   } else if (t == QVariant::String) {
     return toJSON(v.toString());
+  } else if (t == QVariant::List) {
+    return toJSON(v.toList());
   } else {
     return "null";
   }

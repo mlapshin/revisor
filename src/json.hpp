@@ -28,6 +28,7 @@ class JSON
 
 
   static QString toJSON(const QVariant& v);
+  static QString toJSON(const QVariantList& variantList);
   static QString toJSON(const QString& value);
   static QString toJSON(const QList<QNetworkCookie>& cookies);
 };
