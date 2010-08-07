@@ -163,7 +163,7 @@ DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab*
   ARG_FROM_COMMAND(unsigned int, x, "x", Number, 0);
   ARG_FROM_COMMAND(unsigned int, y, "y", Number, 0);
 
-  ARG_FROM_COMMAND(QString, type, "type", String, "move");
+  ARG_FROM_COMMAND(QString, type, "type", String, "click");
   STRING_TO_ENUM(type, realType, "click", QEvent::MouseButtonPress);
   STRING_TO_ENUM(type, realType, "button_press", QEvent::MouseButtonPress);
   STRING_TO_ENUM(type, realType, "button_release", QEvent::MouseButtonRelease);

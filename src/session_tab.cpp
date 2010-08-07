@@ -159,8 +159,6 @@ void SessionTab::saveScreenshot(const QString& fileName, const QSize& viewportSi
 
 bool SessionTab::sendEvent(QEvent* e)
 {
-  QMouseEvent* me = static_cast<QMouseEvent*>(e);
-
   webView->setEnabled(true);
   bool ret = session->getApplication()->sendEvent(webView, e);
   webView->setEnabled(false);
@@ -170,27 +168,40 @@ bool SessionTab::sendEvent(QEvent* e)
 
 bool SessionTab::sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+  QWebFrame* frame = webPage->mainFrame();
   QPoint relativePoint;
+
   unsigned int scrollX = 0;
   unsigned int scrollY = 0;
 
-  unsigned int w = webView->size().width();
-  unsigned int h = webView->size().height();
+  QPoint savedScrollPos = frame->scrollPosition();
 
-  if (point.x() > w) {
-    scrollX = (w * (point.x() / w));
-    relativePoint.setX(point.x() % w);
+  unsigned int w = frame->geometry().width() - frame->scrollBarGeometry(Qt::Vertical).width();
+  unsigned int h = frame->geometry().height() - frame->scrollBarGeometry(Qt::Horizontal).height();
+
+  // unsigned int maxScrollX = frame->scrollBarMaximum(Qt::Horizontal);
+  // unsigned int maxScrollY = frame->scrollBarMaximum(Qt::Vertical);
+
+  if (point.x() > (w - 1)) {
+    scrollX = point.x() - w + 1;
+    relativePoint.setX(w - 1);
+  } else {
+    relativePoint.setX(point.x());
   }
 
-  if (point.y() > h) {
-    scrollY = (h * (point.y() / h));
-    relativePoint.setY(point.y() % h);
+  if (point.y() > (h - 1)) {
+    scrollY = point.y() - h + 1;
+    relativePoint.setY(h - 1);
+  } else {
+    relativePoint.setY(point.y());
   }
-
-  webView->scroll(scrollX, scrollY);
 
   QMouseEvent event(type, relativePoint, button, buttons, modifiers);
-  qDebug() << "Sending mouse event" << type << relativePoint;
+  frame->setScrollPosition(QPoint(scrollX, scrollY));
 
-  return sendEvent(&event);
+  bool ret = sendEvent(&event);
+
+  frame->setScrollPosition(savedScrollPos);
+
+  return ret;
 }
