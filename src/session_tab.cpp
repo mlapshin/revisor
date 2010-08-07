@@ -158,8 +158,6 @@ bool SessionTab::sendEvent(QEvent* e)
 {
   QMouseEvent* me = static_cast<QMouseEvent*>(e);
 
-  qDebug() << me->pos() << me->type() << me->button();
-
   webView->setEnabled(true);
   session->getApplication()->sendEvent(webView, e);
   webView->setEnabled(false);

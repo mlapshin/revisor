@@ -135,7 +135,7 @@ Retrieve list of actual cookies for specified URL.
 * `url` - URL to get cookies for.
 
 ### session.tab.send_mouse_event ###
-Sends mouse event to web page.
+Sends mouse event to a web page in specified tab.
 
 * `session_name` - session name
 * `tab_name` - tab name
