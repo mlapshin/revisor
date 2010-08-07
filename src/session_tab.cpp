@@ -190,5 +190,7 @@ bool SessionTab::sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt:
   webView->scroll(scrollX, scrollY);
 
   QMouseEvent event(type, relativePoint, button, buttons, modifiers);
+  qDebug() << "Sending mouse event" << type << relativePoint;
+
   return sendEvent(&event);
 }
