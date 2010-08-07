@@ -15,7 +15,9 @@ CountingNetworkAccessManager::CountingNetworkAccessManager(QObject* parent)
   connect(this, SIGNAL(finished(QNetworkReply*)),
           this, SLOT(requestFinished(QNetworkReply*)));
 
-  setCache(s->getSession()->getApplication()->getHttpCache());
+  cache = new QNetworkDiskCache(this);
+  cache->setCacheDirectory(QString("/tmp/revisor_cache/%1/%2/").arg(s->getSession()->getName()).arg(s->getName()));
+  setCache(cache);
 }
 
 QNetworkReply* CountingNetworkAccessManager::createRequest(Operation op, const QNetworkRequest& req, QIODevice* outgoingData)

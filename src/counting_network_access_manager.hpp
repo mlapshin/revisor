@@ -4,6 +4,8 @@
 #include <QNetworkAccessManager>
 #include <QMutex>
 
+class QNetworkDiskCache;
+
 class CountingNetworkAccessManager : public QNetworkAccessManager
 {
   Q_OBJECT;
@@ -24,6 +26,7 @@ class CountingNetworkAccessManager : public QNetworkAccessManager
  private:
   QMutex counterMutex;
   unsigned int requestsCount;
+  QNetworkDiskCache* cache;
 };
 
 #endif /* _COUNTING_NETWORK_ACCESS_MANAGER_H_ */
