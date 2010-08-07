@@ -25,7 +25,7 @@ Why Revisor is better?
 Or "Why Selenium sucks?" Because:
 
 * No Java Required
-* No fight with [same origin policy](http://seleniumhq.org/docs/05_selenium_rc.html#the-same-origin-policy).
+* No fight with [Same Origin Policy](http://seleniumhq.org/docs/05_selenium_rc.html#the-same-origin-policy).
 * It's lightweight and easy to use. You don't need to run Big Firefox
   with all it's unnecessary GUI and plugins.
 * It allows to have completely separate "sessions" within one Revisor
@@ -43,6 +43,22 @@ You need Qt 4.6 and ArgTable2 to compile Revisor.
     $ mkdir build && cd build
     $ qmake ../revisor_server.pro
     $ make
+    
+That's all!
+    
+Usage
+----------
+
+To use Revisor, just run it's executable and start sending requests.
+
+    $ ./revisor -l 127.0.0.1 -p 8080 &
+      Revisor is listening "127.0.0.1" on port 8080 PID xxxx
+    $ curl --data "command={name:'session.start',session_name:'Hello world!'}" http://127.0.0.1:8080/command
+      
+Revisor comes with
+[Ruby helper library](http://github.com/sotakone/ruby_revisor_client/),
+which you might find useful. This library contains object-oriented
+client API, usage examples (GMail test) and test suite.
 
 Command reference
 ----------
