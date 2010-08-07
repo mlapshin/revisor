@@ -201,6 +201,7 @@ bool SessionTab::sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt:
 
   bool ret = sendEvent(&event);
 
+  qDebug() << "Mouse event" << type << relativePoint;
   frame->setScrollPosition(savedScrollPos);
 
   return ret;

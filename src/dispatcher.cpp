@@ -142,6 +142,7 @@ Qt::KeyboardModifier stringToModifier(const QString& modifier)
   STRING_TO_ENUM(modifier, ret, "", Qt::NoModifier);
   STRING_TO_ENUM(modifier, ret, "shift", Qt::ShiftModifier);
   STRING_TO_ENUM(modifier, ret, "control", Qt::ControlModifier);
+  STRING_TO_ENUM(modifier, ret, "ctrl", Qt::ControlModifier);
   STRING_TO_ENUM(modifier, ret, "alt", Qt::AltModifier);
   STRING_TO_ENUM(modifier, ret, "meta", Qt::MetaModifier);
   STRING_TO_ENUM(modifier, ret, "keypad", Qt::KeypadModifier);
@@ -206,9 +207,15 @@ DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab*
     }
   }
 
-  if (type == "click") {
+  // TODO: this logic should be inside web page or tab, please refactor
+  if (type == "click" || type == "dblclick") {
     tab->sendMouseEvent(QEvent::MouseButtonPress, QPoint(x, y), realButton, realButtons, realModifiers);
     tab->sendMouseEvent(QEvent::MouseButtonRelease, QPoint(x, y), realButton, realButtons, realModifiers);
+
+    if (type == "dblclick") {
+      tab->sendMouseEvent(QEvent::MouseButtonDblClick, QPoint(x, y), realButton, realButtons, realModifiers);
+      tab->sendMouseEvent(QEvent::MouseButtonRelease, QPoint(x, y), realButton, realButtons, realModifiers);
+    }
   } else {
     tab->sendMouseEvent(realType, QPoint(x, y), realButton, realButtons, realModifiers);
   }
