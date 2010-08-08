@@ -95,7 +95,6 @@ void SessionTab::setPromptAnswer(const QString& a, bool cancelled)
 QVariant SessionTab::evaluateScript(const QString& script)
 {
   QVariant ret = webView->page()->mainFrame()->evaluateJavaScript(script);
-  qDebug() << "Eval result: " << ret;
   return ret;
 }
 
