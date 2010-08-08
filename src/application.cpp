@@ -4,6 +4,8 @@
 #include "session.hpp"
 #include <QDebug>
 #include "exception.hpp"
+#include <argtable2.h>
+#include "main_window.hpp"
 
 Application::Application(int _argc, char** _argv)
     : QApplication(_argc, _argv)
@@ -20,6 +22,7 @@ int Application::start()
   if (initArgtable()) {
     dispatcher = new Dispatcher(this);
     httpServer = new HttpServer(listeningInterface, portNumber, this, dispatcher);
+    mainWindow = new MainWindow(this);
 
     return exec();
   } else {
@@ -65,11 +68,13 @@ bool Application::initArgtable()
 
 Application::~Application()
 {
-  for(SessionsMap::iterator i = sessions.begin(); i != sessions.end(); i++) {
+  for (SessionsMap::iterator i = sessions.begin(); i != sessions.end(); i++) {
     delete *i;
   }
-
   sessions.clear();
+
+  mainWindow->close();
+  delete mainWindow;
 }
 
 Session* Application::startSession(const QString& name)

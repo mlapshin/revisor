@@ -33,6 +33,10 @@ class SessionTab : public QObject
     return name;
   }
 
+  inline const QString& getFullName() const {
+    return fullName;
+  }
+
   inline bool isLoadSuccessfull() const {
     return successfullLoad;
   }
@@ -67,9 +71,6 @@ class SessionTab : public QObject
   QWaitCondition pageLoaded;
   QMutex pageLoadedMutex;
 
-  QWaitCondition requestsFinished;
-  QMutex requestsFinishedMutex;
-
   CountingNetworkAccessManager* networkManager;
   Session* session;
   QWebView* webView;
@@ -77,6 +78,7 @@ class SessionTab : public QObject
   QString pageTitle;
   int loadProgress;
   QString name;
+  QString fullName;
   bool successfullLoad;
 };
 

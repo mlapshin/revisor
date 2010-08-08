@@ -19,7 +19,7 @@ class SleepyThread : public QThread
 };
 
 SessionTab::SessionTab(Session* s, const QString& n)
-    : QObject(s), session(s), loadProgress(0), name(n)
+    : QObject(s), session(s), loadProgress(0), name(n), fullName(QString("%1/%2").arg(session->getName()).arg(name))
 {
   successfullLoad = false;
   networkManager = new CountingNetworkAccessManager(this);
@@ -28,8 +28,7 @@ SessionTab::SessionTab(Session* s, const QString& n)
   webPage = new WebPage(this);
   webPage->setNetworkAccessManager(networkManager);
 
-  QWidget* window = reinterpret_cast<QWidget*>(session->getTabWidget());
-  webView = new QWebView(window);
+  webView = new QWebView();
   webView->setPage(webPage);
   webView->setDisabled(true);
 
@@ -45,14 +44,12 @@ SessionTab::SessionTab(Session* s, const QString& n)
   connect(webView, SIGNAL(loadStarted()),
           this,    SLOT(loadStarted()));
 
-
   connect(networkManager, SIGNAL(finished(QNetworkReply*)),
           this,           SLOT(singleRequestFinished(QNetworkReply*)));
 }
 
 SessionTab::~SessionTab()
 {
-  delete webView;
   delete webPage;
 }
 
@@ -147,9 +144,6 @@ void SessionTab::_updateTabTitle()
 
 void SessionTab::singleRequestFinished(QNetworkReply* reply)
 {
-  if (networkManager->getRequestsCount() == 0) {
-    requestsFinished.wakeAll();
-  }
 }
 
 void SessionTab::saveScreenshot(const QString& fileName, const QSize& viewportSize)

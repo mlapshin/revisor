@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include "exception.hpp"
 #include "json.hpp"
+#include "main_window.hpp"
 
 #define ARG_FROM_COMMAND(ctype, var, name, type, default)            \
   ctype var = default;                                               \
@@ -238,7 +239,10 @@ DispatcherResponse Dispatcher::handleSessionTabCommand(const QString& commandNam
       command.property("tab_name").isValid()) {
     session = app->getSession(sessionName);
     tab = session->getTab(tabName);
-    session->raiseTab(tabName);
+
+    if (tab) {
+      app->getMainWindow()->raiseSessionTab(tab);
+    }
   }
 
   if (commandName == "session.tab.create") {

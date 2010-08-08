@@ -5,11 +5,11 @@
 #include <QMap>
 #include <QStringList>
 #include <QScriptEngine>
-#include <argtable2.h>
 
 class HttpServer;
 class Dispatcher;
 class Session;
+class MainWindow;
 
 class Application : public QApplication
 {
@@ -27,8 +27,12 @@ class Application : public QApplication
     return sessions.size();
   }
 
-  QScriptEngine* getScriptEngine() {
+  inline QScriptEngine* getScriptEngine() {
     return &scriptEngine;
+  }
+
+  inline MainWindow* getMainWindow() {
+    return mainWindow;
   }
 
   int start();
@@ -45,6 +49,7 @@ class Application : public QApplication
   Dispatcher* dispatcher;
   SessionsMap sessions;
   QScriptEngine scriptEngine;
+  MainWindow* mainWindow;
 };
 
 #endif /* _APPLICATION_H_ */

@@ -15,18 +15,6 @@ class QTabWidget;
 class SessionTab;
 class Session;
 
-class SessionWindow : public QWidget
-{
-  Q_OBJECT;
-
- public:
-  SessionWindow(Session* s);
-  void closeEvent(QCloseEvent* event);
-
- protected:
-  Session* session;
-};
-
 class Session : public QObject
 {
   Q_OBJECT;
@@ -38,14 +26,6 @@ class Session : public QObject
 
   inline QNetworkCookieJar* getNetworkCookieJar() const {
     return cookieJar;
-  }
-
-  inline SessionWindow* getWindow() const {
-    return window;
-  }
-
-  inline QTabWidget* getTabWidget() const {
-    return tabWidget;
   }
 
   inline const QString& getName() const {
@@ -64,23 +44,15 @@ class Session : public QObject
   }
 
   SessionTab* getTab(const QString& tabName) const;
-  void raiseTab(const QString& name);
-  void raiseTab(SessionTab* tab);
 
   void setCookiesFor(const QList<QNetworkCookie>& cookies, const QUrl& forUrl);
   QList<QNetworkCookie> getCookiesFor(const QUrl& forUrl) const;
-
- private slots:
-  void updateTabTitle(const QString& newTabTitle);
 
  private:
   int getTabIndex(const QString& tabName);
 
   QNetworkCookieJar* cookieJar;
   Application* app;
-  SessionWindow* window;
-  QVBoxLayout* layout;
-  QTabWidget* tabWidget;
   SessionTabsMap tabs;
   QString name;
 };
