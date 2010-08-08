@@ -138,7 +138,7 @@ void SessionTab::_updateTabTitle()
     title += QString(" (%1%)").arg(loadProgress);
   }
 
-  title += QString(" [%1]").arg(name);
+  title += QString(" [%1]").arg(fullName);
   emit titleChanged(title);
 }
 

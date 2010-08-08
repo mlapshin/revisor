@@ -8,7 +8,7 @@ MainWindow::MainWindow(Application* a)
     : QWidget(), app(a)
 {
   resize(800, 600);
-  setWindowTitle("Revisor Main Window");
+  setWindowTitle("Revisor Window");
 
   QVBoxLayout* layout = new QVBoxLayout;
   tabWidget = new QTabWidget(this);
@@ -51,6 +51,7 @@ void MainWindow::unregisterSessionTab(SessionTab* tab)
 void MainWindow::raiseSessionTab(SessionTab* tab)
 {
   if (tabs.contains(tab->getFullName())) {
+    raise();
     tabWidget->setCurrentWidget(tab->getWebView());
   }
 }

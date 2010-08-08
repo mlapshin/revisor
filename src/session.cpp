@@ -17,7 +17,6 @@ Session::Session(Application* a, const QString& n)
 Session::~Session()
 {
   // Collect all tab names to list and then destroy each tab personally
-
   QStringList tabNames;
   for (SessionTabsMap::Iterator it = tabs.begin(); it != tabs.end(); it++) {
     tabNames.append(it.key());
