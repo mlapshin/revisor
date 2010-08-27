@@ -26,7 +26,6 @@ class JSON
   static QString toJSON(qulonglong value);
   static QString toJSON(const QDateTime& value);
 
-
   static QString toJSON(const QVariant& v);
   static QString toJSON(const QVariantList& variantList);
   static QString toJSON(const QString& value);

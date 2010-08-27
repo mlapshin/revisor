@@ -60,7 +60,7 @@ class Dispatcher: public QObject
   DispatcherResponse handleSessionCommand(const QString& commandName, const QScriptValue& cmd);
   DispatcherResponse handleSessionTabCommand(const QString& commandName, const QScriptValue& cmd);
   DispatcherResponse handleSessionTabSendMouseEventCommand(SessionTab* t, const QScriptValue& cmd);
-
+  DispatcherResponse handleSessionTabSendKeyEventCommand(SessionTab* t, const QScriptValue& cmd);
 
   Application* app;
 };
