@@ -163,7 +163,6 @@ bool SessionTab::sendEvent(QEvent* e)
 bool SessionTab::sendKeyEvent(QKeyEvent::Type type, Qt::Key key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorep, ushort count)
 {
   QKeyEvent event(type, key, modifiers, text, autorep, count);
-  qDebug() << "Key event" << type << text;
   bool ret = sendEvent(&event);
 
   return ret;

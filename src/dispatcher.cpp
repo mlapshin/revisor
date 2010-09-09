@@ -667,7 +667,6 @@ DispatcherResponse Dispatcher::handleSessionTabSendKeyEventCommand(SessionTab* t
 
   realModifiers = jsonArrayToModifiers(command.property("modifiers"));
 
-  qDebug() << "KeyEvent" << type;
   if (type == "press") {
     tab->sendKeyEvent(QEvent::KeyPress, realKey, realModifiers, text, false, 1);
     tab->sendKeyEvent(QEvent::KeyRelease, realKey, realModifiers, text, false, 1);
