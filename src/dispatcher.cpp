@@ -572,6 +572,8 @@ int stringToKey(const QString& key)
 
 Qt::KeyboardModifiers jsonArrayToModifiers(const QScriptValue& array)
 {
+  Qt::KeyboardModifiers realModifiers;
+
   if (array.isArray()) {
     int arrayLength = array.property("length").toInt32();
 
@@ -583,6 +585,8 @@ Qt::KeyboardModifiers jsonArrayToModifiers(const QScriptValue& array)
       }
     }
   }
+
+  return realModifiers;
 }
 
 DispatcherResponse Dispatcher::handleSessionTabSendMouseEventCommand(SessionTab* tab, const QScriptValue& command)
@@ -659,9 +663,10 @@ DispatcherResponse Dispatcher::handleSessionTabSendKeyEventCommand(SessionTab* t
 
   ARG_FROM_COMMAND(QString, text, "text", String, "");
   ARG_FROM_COMMAND(QString, key, "key", String, "");
-  realKey = stringToKey(key);
+  realKey = static_cast<Qt::Key>(stringToKey(key));
 
   realModifiers = jsonArrayToModifiers(command.property("modifiers"));
+  tab->sendKeyEvent(realType, realKey, realModifiers, text, false, 1);
 
   return response;
 }

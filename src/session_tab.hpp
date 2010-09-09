@@ -54,6 +54,7 @@ class SessionTab : public QObject
   void saveScreenshot(const QString& fileName, const QSize& viewportSize);
   bool sendEvent(QEvent* e);
   bool sendMouseEvent(QMouseEvent::Type type, const QPoint& point, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+  bool sendKeyEvent(QKeyEvent::Type type, Qt::Key key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorep, ushort count);
 
  public slots:
   void updateTitle(const QString& t);

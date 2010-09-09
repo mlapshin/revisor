@@ -9,6 +9,7 @@
 #include <QThread>
 #include "application.hpp"
 #include <QMouseEvent>
+#include <QKeyEvent>
 
 class SleepyThread : public QThread
 {
@@ -155,6 +156,14 @@ bool SessionTab::sendEvent(QEvent* e)
   webView->setEnabled(true);
   bool ret = session->getApplication()->sendEvent(webView, e);
   webView->setEnabled(false);
+
+  return ret;
+}
+
+bool SessionTab::sendKeyEvent(QKeyEvent::Type type, Qt::Key key, Qt::KeyboardModifiers modifiers, const QString& text, bool autorep, ushort count)
+{
+  QKeyEvent event(type, key, modifiers, text, autorep, count);
+  bool ret = sendEvent(&event);
 
   return ret;
 }
