@@ -658,15 +658,22 @@ DispatcherResponse Dispatcher::handleSessionTabSendKeyEventCommand(SessionTab* t
   Qt::KeyboardModifiers realModifiers;
 
   ARG_FROM_COMMAND(QString, type, "type", String, "press");
-  STRING_TO_ENUM(type, realType, "press", QEvent::KeyPress);
-  STRING_TO_ENUM(type, realType, "release", QEvent::KeyRelease);
+  STRING_TO_ENUM(type, realType, "down", QEvent::KeyPress);
+  STRING_TO_ENUM(type, realType, "up", QEvent::KeyRelease);
 
   ARG_FROM_COMMAND(QString, text, "text", String, "");
   ARG_FROM_COMMAND(QString, key, "key", String, "");
   realKey = static_cast<Qt::Key>(stringToKey(key));
 
   realModifiers = jsonArrayToModifiers(command.property("modifiers"));
-  tab->sendKeyEvent(realType, realKey, realModifiers, text, false, 1);
+
+  qDebug() << "KeyEvent" << type;
+  if (type == "press") {
+    tab->sendKeyEvent(QEvent::KeyPress, realKey, realModifiers, text, false, 1);
+    tab->sendKeyEvent(QEvent::KeyRelease, realKey, realModifiers, text, false, 1);
+  } else {
+    tab->sendKeyEvent(realType, realKey, realModifiers, text, false, 1);
+  }
 
   return response;
 }
