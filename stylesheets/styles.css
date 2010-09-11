@@ -6,6 +6,10 @@ body {
   font-size: 14px;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: "New Century Schoolbook", Georgia, Times New Roman, times;
+}
+
 html, body {
   height: 100%;
 }
@@ -19,6 +23,29 @@ html, body {
 #page {
   background: #FFEFB4 url(../images/page-bg-gradient.png) repeat-x top left;
   padding: 2em;
+  -moz-box-shadow: 0 0 7px #aaa;
+}
+
+#header h1 {
+  font-variant: small-caps;
+  font-size: 3.5em;
+  color: #33332d;
+}
+
+#header h2 {
+  font-size: 1.2em;
+}
+
+#header h1, #header h2 {
+  text-align: center;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+.hr {
+  height: 0;
+  border-top: 1px solid #cbbe8f;
+  border-bottom: 1px solid #fff;
+  margin: 1em -2em;
 }
 
 p {
