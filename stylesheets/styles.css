@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Droid Serif";
+  src: url('DroidSerif-Regular.ttf');
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -16,13 +21,15 @@ html {
 #wrapper {
   width: 60em;
   margin: 0 auto;
-  padding: 2em 0;
+  padding: 4em 0;
 }
 
 #page {
   background: #FFEFB4 url(../images/page-bg-gradient.png) repeat-x top left;
   padding: 2em;
-  -moz-box-shadow: 0 0 7px #aaa;
+  -moz-box-shadow: 0 0 2.5em #999;
+  border-bottom: 1px solid #cbbe8f;
+  border-top: 1px solid #fff;
 }
 
 .hr {
@@ -50,18 +57,16 @@ a:active, a:hover {
   color: #DB4105;
 }
 
-#header h1, #header h2 {
-  font-family: "New Century Schoolbook", Georgia, Times New Roman, times;
-}
-
 #header h1 {
+  font-family: "Droid Serif", "New Century Schoolbook", Georgia, Times New Roman, times;
   font-variant: small-caps;
   font-size: 3.5em;
   color: #33332d;
+  line-height: 1em;
 }
 
 #header h2 {
-  font-size: 1.2em;
+  font-size: 0.9em;
 }
 
 #header h1, #header h2 {
@@ -159,4 +164,11 @@ a:active, a:hover {
 
 #screencast {
   text-align: center;
+}
+
+#footer {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: -1em;
+  padding-top: 2em;
 }
