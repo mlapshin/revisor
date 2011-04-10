@@ -91,21 +91,24 @@ DispatcherResponse Dispatcher::handleSessionCommand(const QString& commandName, 
 
       while(it.hasNext()) {
         it.next();
-        QNetworkCookie cookie;
 
-        COOKIE_PARAM_WITH_CAST("name", Name, String, Utf8, true);
-        COOKIE_PARAM_WITH_CAST("value", Value, String, Utf8, true);
-        COOKIE_PARAM_WITH_CAST("path", Path, String, Utf8, false);
-        COOKIE_PARAM_WITH_CAST("domain", Domain, String, Utf8, false);
-        COOKIE_PARAM("http_only", HttpOnly, Bool, false);
-        COOKIE_PARAM("secure", Secure, Bool, false);
-        if (it.value().property("expires_at").isValid()) {
-          QDateTime expiresAt = QDateTime::fromString(it.value().property("expires_at").toString(), Qt::ISODate);
-          expiresAt.setTimeSpec(Qt::UTC);
-          cookie.setExpirationDate(expiresAt);
+        if (it.name() != "length") {    // ignore length property
+          QNetworkCookie cookie;
+
+          COOKIE_PARAM_WITH_CAST("name", Name, String, Utf8, true);
+          COOKIE_PARAM_WITH_CAST("value", Value, String, Utf8, true);
+          COOKIE_PARAM_WITH_CAST("path", Path, String, Utf8, false);
+          COOKIE_PARAM_WITH_CAST("domain", Domain, String, Utf8, false);
+          COOKIE_PARAM("http_only", HttpOnly, Bool, false);
+          COOKIE_PARAM("secure", Secure, Bool, false);
+          if (it.value().property("expires_at").isValid()) {
+            QDateTime expiresAt = QDateTime::fromString(it.value().property("expires_at").toString(), Qt::ISODate);
+            expiresAt.setTimeSpec(Qt::UTC);
+            cookie.setExpirationDate(expiresAt);
+          }
+
+          cookies.append(cookie);
         }
-
-        cookies.append(cookie);
       }
     } else {
       throw Exception("Argument 'cookies' of command 'session.set_cookies' must be an array");
