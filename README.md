@@ -41,11 +41,11 @@ You need Qt 4.6 and ArgTable2 to compile Revisor.
 
     $ sudo apt-get install libqt4-dev libargtable2-dev
     $ mkdir build && cd build
-    $ qmake ../revisor_server.pro
+    $ qmake ../revisor.pro
     $ make
-    
+
 That's all!
-    
+
 Usage
 ----------
 
@@ -54,11 +54,11 @@ To use Revisor, just run it's executable and start sending requests.
     $ ./revisor -l 127.0.0.1 -p 8080 &
       Revisor is listening "127.0.0.1" on port 8080 PID xxxx
     $ curl --data "command={name:'session.start',session_name:'Hello world!'}" http://127.0.0.1:8080/command
-      
+
 Revisor comes with
 [Ruby helper library](http://github.com/sotakone/ruby_revisor_client/),
 which you might find useful. This library contains object-oriented
-client API, usage examples (GMail test) and test suite.
+client API, usage examples and test suite.
 
 Command reference
 ----------
@@ -161,3 +161,9 @@ Sends mouse event to a web page in specified tab.
 * `button` - button for `click`, `button_press`, `button_release` or `dblclick` events, one of ['left', 'right', 'mid', 'xbutton1', 'xbutton2']
 * `buttons` - array of buttons for `move` event
 * `modifiers` - array of keyboard modifiers: ['shift', 'control', 'alt', 'meta', 'keypad', 'group_switch']
+
+Copyrights
+----------
+
+Copyright (c) 2009 Mikhail Lapshin (sotakone at sotakone dot com),
+released under the MIT license.
