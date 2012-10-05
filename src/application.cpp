@@ -6,6 +6,7 @@
 #include "exception.hpp"
 #include <argtable2.h>
 #include "main_window.hpp"
+#include <libjson.h>
 
 Application::Application(int _argc, char** _argv)
     : QApplication(_argc, _argv)
